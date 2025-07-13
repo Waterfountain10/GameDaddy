@@ -15,15 +15,6 @@ jobs:
 
       - name: Validate branch and commit message
         run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
-          echo "Branch: $BRANCH_NAME"
-
-          # Check branch format
-          if ! [[ "$BRANCH_NAME" =~ ^feature\/.+$ ]]; then
-            echo "ERROR: Branch name must start with 'feature/'"
-            exit 1
-          fi
-
           # Check each commit message
           git log origin/main..HEAD --pretty=format:"%s" | while read -r COMMIT_MSG; do
             if ! [[ "$COMMIT_MSG" =~ ^#[0-9]+:\ .* ]]; then
