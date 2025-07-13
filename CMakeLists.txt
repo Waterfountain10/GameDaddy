@@ -80,54 +80,55 @@ if(UNIX)
 endif()
 
 ## For Cross-Compiling to Windows
-#if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-#    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-#    set(BUILD_SHARED_LIBS OFF)          # avoid mixing in shared libs later
-#
-#    message(STATUS "Configuring Windows target")
-#
-#    target_link_options(chip_8_emulator
-#            PRIVATE
-#            -static
-#            -static-libgcc
-#            -static-libstdc++
-#    )
-#
-#    target_link_libraries(chip_8_emulator
-#            PRIVATE
-#            ${SDL2_LIBRARIES}
-#            SDL2::SDL2
-#            SDL2::SDL2main
-#            SDL2_image::SDL2_image
-#    )
-#
-#    target_include_directories(chip_8_emulator
-#            PRIVATE
-#            ${SDL2_INCLUDE_DIRS}
-#            ${SDL2_IMAGE_INCLUDE_DIRS}
-#            ${SDL2_MIXER_INCLUDE_DIRS}
-#    )
-#
-#    # After every build, copy the DLLs next to the .exe
-#    add_custom_command(
-#            TARGET chip_8_emulator POST_BUILD
-#            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#            $<TARGET_RUNTIME_DLLS:chip_8_emulator>
-#            $<TARGET_FILE_DIR:chip_8_emulator>
-#            COMMAND_EXPAND_LISTS
-#    )
-#
-#endif()
-#
-#install(TARGETS chip_8_emulator
-#        RUNTIME DESTINATION .           COMPONENT Runtime)
-#
-#install(DIRECTORY tests/ DESTINATION roms COMPONENT Runtime)
-#install(FILES LICENSE README.md DESTINATION . COMPONENT Runtime)
-#
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    set(BUILD_SHARED_LIBS OFF)          # avoid mixing in shared libs later
+
+    message(STATUS "Configuring Windows target")
+
+    target_link_options(gamedaddy
+            PRIVATE
+            -static
+            -static-libgcc
+            -static-libstdc++
+    )
+
+    target_link_libraries(gamedaddy
+            PRIVATE
+            ${SDL2_LIBRARIES}
+            SDL2::SDL2
+            SDL2::SDL2main
+            SDL2_image::SDL2_image
+    )
+
+    target_include_directories(gamedaddy
+            PRIVATE
+            ${SDL2_INCLUDE_DIRS}
+            ${SDL2_IMAGE_INCLUDE_DIRS}
+            ${SDL2_MIXER_INCLUDE_DIRS}
+    )
+
+    # After every build, copy the DLLs next to the .exe
+    add_custom_command(
+            TARGET gamedaddy POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:gamedaddy>
+            $<TARGET_FILE_DIR:gamedaddy>
+            COMMAND_EXPAND_LISTS
+    )
+
+endif()
+
+install(TARGETS gamedaddy
+        RUNTIME DESTINATION .
+        COMPONENT Runtime)
+
+install(DIRECTORY tests/ DESTINATION roms COMPONENT Runtime)
+install(FILES LICENSE README.md DESTINATION . COMPONENT Runtime)
+
 ## Packaging metadata
-#set(CPACK_GENERATOR "ZIP")
-#set(CPACK_PACKAGE_NAME     "Chip8Emulator")
-#set(CPACK_PACKAGE_VERSION  "1.0.0")
-#set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_NAME}")
-#include(CPack)
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_PACKAGE_NAME "GameDaddy")
+set(CPACK_PACKAGE_VERSION  "1.0.0")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_NAME}")
+include(CPack)
