@@ -41,7 +41,9 @@ add_executable(gamedaddy main.cpp
         test/interrupts_test.cpp
         test/sound_test.cpp
         test/cli_test.cpp
-        test/mbc_test.cpp)
+        test/mbc_test.cpp
+        platform-layer/gui.cpp
+        platform-layer/gui.h)
 
 
 find_package(SDL2 CONFIG REQUIRED)
@@ -70,7 +72,7 @@ if(UNIX)
             ${SDL2_LIBRARIES}
             SDL2::SDL2
             SDL2::SDL2main
-    ) # links all libraries to our chip-8 app
+    ) # links all libraries to our gameboy
     target_include_directories(gamedaddy
             PRIVATE
             ${SDL2_INCLUDE_DIRS}
