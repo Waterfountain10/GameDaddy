@@ -19,8 +19,8 @@ endif()
 add_executable(gamedaddy main.cpp
         platform-layer/platform.cpp
         platform-layer/platform.h
-        platform-layer/cli.cpp
-        platform-layer/cli.h
+        platform-layer/display/impl/cli.cpp
+        platform-layer/display/impl/cli.h
         gameboy-hardware/cpu/cpu.cpp
         gameboy-hardware/cpu/cpu.h
         gameboy-hardware/io/sound/sound.cpp
@@ -42,8 +42,10 @@ add_executable(gamedaddy main.cpp
         test/sound_test.cpp
         test/cli_test.cpp
         test/mbc_test.cpp
-        platform-layer/gui.cpp
-        platform-layer/gui.h)
+        platform-layer/display/impl/sdl_gui.cpp
+        platform-layer/display/impl/sdl_gui.h
+        platform-layer/display/display_interface.h
+)
 
 
 find_package(SDL2 CONFIG REQUIRED)

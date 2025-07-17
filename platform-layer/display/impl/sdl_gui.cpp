@@ -2,7 +2,7 @@
 // Created by William Lafond on 2025-07-13.
 //
 
-#include "gui.h"
+#include "../gui.h"
 
 #include <iostream>
 

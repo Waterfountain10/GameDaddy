@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#include "gui.h"
+#include "display/impl/sdl_gui.h"
 
 namespace GameBoy {
     Platform::Platform(

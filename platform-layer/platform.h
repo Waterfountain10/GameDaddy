@@ -7,17 +7,17 @@
 
 #endif //PLATFORM_H
 
-#include "gui.h"
+#include "display/impl/sdl_gui.h"
 
 namespace GameBoy {
+class CPU;
 
 class Platform {
 private:
     const std::shared_ptr<GameBoy::CPU> cpu_;
-    const std::shared_ptr<GameBoy::PPU> ppu_;
-    const std::shared_ptr<GameBoy::JoyPad> joypad_;
-    const std::shared_ptr<GameBoy::Sound> sound_; // sound chip hardware
-    const std::shared_ptr<GUI> gui_;
+    //const std::shared_ptr<GameBoy::PPU> ppu_;
+    //const std::shared_ptr<GameBoy::JoyPad> joypad_;
+    //const std::shared_ptr<GameBoy::Sound> sound_; // sound chip hardware
 public:
 };
 }
