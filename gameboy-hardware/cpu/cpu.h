@@ -9,6 +9,7 @@
 #endif //CPU_H
 
 namespace GameBoy {
+enum class Reg8;
 
 class CPU {
 public:
@@ -16,12 +17,12 @@ public:
     void reset_registers();
 
     // Getters
-    uint8_t get_register_at(char x) const;
+    uint8_t get_register_at(Reg8 reg) const;
     uint16_t get_sp() const {return sp_; }
     uint16_t get_pc() const { return pc_; }
 
     // Setters
-    void set_register(char reg, uint8_t value);
+    void set_register(Reg8 reg, uint8_t value);
     void set_sp(uint16_t value) { sp_ = value; }
     void set_pc(uint16_t value) { pc_ = value; }
 
@@ -31,7 +32,6 @@ private:
     uint8_t b_, c_; // BC - register
     uint8_t d_, e_; // DE - register
     uint8_t h_, l_; // HL - register
-
     uint16_t sp_;    // Stack Pointer
     uint16_t pc_;    // Program Counter
 
@@ -47,4 +47,9 @@ private:
     // TODO: Implement memory access (bus) reference
     // TODO: Implement opcode fetch-decode-execute
 };
+
+enum class Reg8 {
+    A, F, B, C, D, E, H, L
+};
+
 }
