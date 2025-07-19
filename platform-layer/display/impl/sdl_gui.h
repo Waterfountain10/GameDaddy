@@ -10,34 +10,27 @@
 #include <SDL_video.h>
 #include <string>
 
+#include "../display_interface.h"
+
 namespace GameBoy {
 
-    class Gui {
-    public:
-        Gui(const std::string name, int width, int height, bool is_demo); // constructor
-        ~Gui();
-        void clear();
-        void present_idle();
-        bool input_rom_path(std::string rom_path);
-        void draw_pixel(int col, int row /* int scale */, bool on); // on, paint white, off is nothing
-
-        int update_texture(uint8_t* gfx_ptr);
-
-    private:
-        SDL_Window* win = nullptr;
-        SDL_Texture*  screen_texture;
-        std::unique_ptr<SDL_Rect> screen_rect;
-        SDL_Renderer* ren = nullptr;
-        SDL_Color* colors;
-
-        uint8_t width;
-        uint8_t height;
-
-        bool intro;
-
-        SDL_Color* init_colors();
-    };
-
+class SDLGui : public DisplayInterface {
+public:
+    SDLGui(int w, int h);
+    ~SDLGui() override;
+    void clear() override;
+    void present_idle() override;
+    void draw_pixel(int col, int row, bool draw_on, int color_index) override;
+    int update_screen(int* gfx_ptr) override;
+private:
+    SDL_Color* init_colors();
+    SDL_Window* win = nullptr;
+    SDL_Texture*  screen_texture;
+    std::unique_ptr<SDL_Rect> screen_rect;
+    SDL_Renderer* ren = nullptr;
+    SDL_Color* colors;
+    // add private helpers for gui related stuff if needed.
+};
 }
 
-#endif //gui_h
+#endif //SDL_GUI_H

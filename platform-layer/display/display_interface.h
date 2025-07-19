@@ -10,11 +10,11 @@ public:
     virtual ~DisplayInterface() = default; // uses compiler default deconstructor
     virtual void clear() = 0;
     virtual void present_idle() = 0;
-    virtual void draw_pixel(int col, int row, bool draw_on);
-    int update_texture(int* gfx_ptr);
+    virtual void draw_pixel(int col, int row, bool draw_on, int color_index) = 0;
+    virtual int update_screen(int* gfx_buffer_ptr) = 0;
 protected:
-    int display_width;
-    int display_height;
+    int display_width = 0;
+    int display_height = 0;
 // base classes or interfaces should not have private methods/fields
 };
 
