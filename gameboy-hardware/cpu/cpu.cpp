@@ -28,14 +28,14 @@ void CPU::reset_registers() {
 
 uint8_t CPU::get_register_at(Reg8 reg) const {
     switch (reg) {
-        case "A" : return a_;
-        case "F" : return f_;
-        case "B" : return b_;
-        case "C" : return c_;
-        case "D" : return d_;
-        case "E" : return e_;
-        case "H" : return h_;
-        case "L" : return l_;
+        case Reg8::A : return a_;
+        case Reg8::F : return f_;
+        case Reg8::B : return b_;
+        case Reg8::C : return c_;
+        case Reg8::D : return d_;
+        case Reg8::E : return e_;
+        case Reg8::H : return h_;
+        case Reg8::L : return l_;
     default: return 0;
     }
 }
