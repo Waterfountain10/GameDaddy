@@ -5,6 +5,7 @@
 #ifndef DISPLAY_INTERFACE_H
 #define DISPLAY_INTERFACE_H
 
+namespace GameBoy {
 class DisplayInterface {
 public:
     virtual ~DisplayInterface() = default; // uses compiler default deconstructor
@@ -15,7 +16,8 @@ public:
 protected:
     int display_width = 0;
     int display_height = 0;
-// base classes or interfaces should not have private methods/fields
+    // base classes or interfaces should not have private methods/fields
 };
+}
 
 #endif //DISPLAY_INTERFACE_H

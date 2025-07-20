@@ -4,6 +4,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
 
+#include "gameboy-hardware/cpu/cpu.h"
+#include "platform-layer/platform.h"
+#include "platform-layer/display/display_interface.h"
+#include "platform-layer/display/impl/sdl_gui.h"
 
 int main(int argc, char *argv[])
 {
@@ -45,9 +49,26 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // create a game GUI
+    // initialized all the hardware
+    std::shared_ptr<GameBoy::CPU> cpu_instance = std::make_shared<GameBoy::CPU>();
+        // TODO : add the rest of the hardware parts
 
+    // initialize the gui
+    bool use_gui = true; // TODO : Implement a toggle off for CLI mode
+    std::shared_ptr<GameBoy::DisplayInterface> screen;
+    if (use_gui) {
+        screen = std::make_shared<GameBoy::SDLGui>(160, 144);
+    } else {
+        // TODO Implement the CLI mode
+    }
 
+    // initialized the platform
+    auto gb_platform = std::make_shared<GameBoy::Platform>(cpu_instance);
+    gb_platform->setDisplay(screen);
 
+    // start the game loop
+    gb_platform->run(); // TODO: change the actual game loop to run indefinetely (not a fixed timer)
+    SDL_Quit();
+    // End of all SDL subsystems + destruct layer
     return 0;
 }
