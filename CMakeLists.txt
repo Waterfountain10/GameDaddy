@@ -19,8 +19,8 @@ endif()
 add_executable(gamedaddy main.cpp
         platform-layer/platform.cpp
         platform-layer/platform.h
-        platform-layer/cli.cpp
-        platform-layer/cli.h
+        platform-layer/display/impl/cli.cpp
+        platform-layer/display/impl/cli.h
         gameboy-hardware/cpu/cpu.cpp
         gameboy-hardware/cpu/cpu.h
         gameboy-hardware/io/sound/sound.cpp
@@ -41,7 +41,11 @@ add_executable(gamedaddy main.cpp
         test/interrupts_test.cpp
         test/sound_test.cpp
         test/cli_test.cpp
-        test/mbc_test.cpp)
+        test/mbc_test.cpp
+        platform-layer/display/impl/sdl_gui.cpp
+        platform-layer/display/impl/sdl_gui.h
+        platform-layer/display/display_interface.h
+)
 
 
 find_package(SDL2 CONFIG REQUIRED)
@@ -70,7 +74,7 @@ if(UNIX)
             ${SDL2_LIBRARIES}
             SDL2::SDL2
             SDL2::SDL2main
-    ) # links all libraries to our chip-8 app
+    ) # links all libraries to our gameboy
     target_include_directories(gamedaddy
             PRIVATE
             ${SDL2_INCLUDE_DIRS}
