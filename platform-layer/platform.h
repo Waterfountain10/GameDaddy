@@ -9,17 +9,23 @@
 #include "display/display_interface.h"
 
 namespace GameBoy {
+class Memory;
 class CPU;
 
 class Platform {
 public:
-    explicit Platform(std::shared_ptr<CPU> cpu_instance); // TODO : add the other hardware parts
+    explicit Platform(
+        std::shared_ptr<CPU> cpu_instance,
+        std::shared_ptr<Memory> memory_instance
+        ); // TODO : add the other hardware parts
     void setDisplay(std::shared_ptr<DisplayInterface> display);
     void run_frame();
     void run(); // TODO: remove after implementing real game loop
     std::shared_ptr<DisplayInterface> display_; // TODO : move this into private and add public methods using it
+    void load_rom_into_memory(const std::vector<uint8_t>& rom_data);
 private:
     const std::shared_ptr<GameBoy::CPU> cpu_;
+    std::shared_ptr<GameBoy::Memory> memory_;
     //const std::shared_ptr<GameBoy::PPU> ppu_;
     //const std::shared_ptr<GameBoy::JoyPad> joypad_;
     //const std::shared_ptr<GameBoy::Sound> sound_; // sound chip hardware

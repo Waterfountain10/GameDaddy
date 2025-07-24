@@ -5,6 +5,7 @@
 #include <SDL2/SDL_timer.h>
 
 #include "gameboy-hardware/cpu/cpu.h"
+#include "gameboy-hardware/memory/memory.h"
 #include "platform-layer/platform.h"
 #include "platform-layer/display/display_interface.h"
 #include "platform-layer/display/impl/sdl_gui.h"
@@ -51,7 +52,8 @@ int main(int argc, char *argv[])
 
     // initialized all the hardware
     std::shared_ptr<GameBoy::CPU> cpu_instance = std::make_shared<GameBoy::CPU>();
-        // TODO : add the rest of the hardware parts
+    std::shared_ptr<GameBoy::Memory> memory_instance = std::make_shared<GameBoy::Memory>();
+    // TODO : add the rest of the hardware parts
 
     // initialize the gui
     bool use_gui = true; // TODO : Implement a toggle off for CLI mode
@@ -63,8 +65,19 @@ int main(int argc, char *argv[])
     }
 
     // initialized the platform
-    auto gb_platform = std::make_shared<GameBoy::Platform>(cpu_instance);
+    auto gb_platform = std::make_shared<GameBoy::Platform>(
+        cpu_instance,
+        memory_instance
+    );
     gb_platform->setDisplay(screen);
+
+    // load rom
+    // TODO: load the boot rom
+    std::streamsize rom_size = rom_file.tellg();
+    rom_file.seekg(0, std::ios::beg);
+    std::vector<uint8_t> rom_data(rom_size);
+    rom_file.read(reinterpret_cast<char*>(rom_data.data()), rom_size);
+    gb_platform->load_rom_into_memory(rom_data);
 
     // start the game loop
     gb_platform->run(); // TODO: change the actual game loop to run indefinetely (not a fixed timer)
