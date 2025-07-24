@@ -45,6 +45,8 @@ add_executable(gamedaddy main.cpp
         platform-layer/display/impl/sdl_gui.cpp
         platform-layer/display/impl/sdl_gui.h
         platform-layer/display/display_interface.h
+        gameboy-hardware/memory/memory.cpp
+        gameboy-hardware/memory/memory.h
 )
 
 

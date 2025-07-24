@@ -10,13 +10,16 @@
 #include <thread>
 
 #include "display/impl/sdl_gui.h"
+#include "../gameboy-hardware/memory/memory.h"
 
 namespace GameBoy {
 // TODO: implement the commented parts
 Platform::Platform(
-    std::shared_ptr<GameBoy::CPU> cpu_instance
+    std::shared_ptr<GameBoy::CPU> cpu_instance,
+    std::shared_ptr<GameBoy::Memory> memory_instance
     ):
-    cpu_ { cpu_instance }
+    cpu_ { cpu_instance },
+    memory_ { memory_instance}
 //     std::shared_ptr<GameBoy::PPU> ppu_instance,
 //     std::shared_ptr<GameBoy::JoyPad> joypad_instance,
 //     std::shared_ptr<GameBoy::Sound> sound_instance,
@@ -28,7 +31,7 @@ Platform::Platform(
 // gui_ { gui_instance }
 {
     // constructor body
-    if (!cpu_) {
+    if (!cpu_ | !memory_) {
         std::cerr << "Platform: Invalid instantiation of Platform Layer\n" << std::endl;
         return;
     }
@@ -84,6 +87,11 @@ void Platform::run() {
         SDL_Delay(16);
     }
 }
+
+void Platform::load_rom_into_memory(const std::vector<uint8_t>& rom_data) {
+    memory_->load_rom(rom_data);
+}
+
 
 } // namespace GameBoy
 
