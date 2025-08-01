@@ -73,11 +73,22 @@ int main(int argc, char *argv[])
 
     // load rom
     // TODO: load the boot rom
-    std::streamsize rom_size = rom_file.tellg();
-    rom_file.seekg(0, std::ios::beg);
+
+
+    std::streamsize rom_size = rom_file.tellg(); // tellg gets pointer position (end of file)
+    rom_file.seekg(0, std::ios::beg); // move to beginnging to start reading rom data
     std::vector<uint8_t> rom_data(rom_size);
     rom_file.read(reinterpret_cast<char*>(rom_data.data()), rom_size);
     gb_platform->load_rom_into_memory(rom_data);
+
+    // validate the rom
+    if (!gb_platform->validate_rom()) throw std::runtime_error(""
+        "Loaded ROM has failed the validation. Many possible failures including:\n"
+               "Nintendo Logo written in wrong location,\n"
+               "Header checksum written in wrong location,\n"
+               "Wrong cartridge type,\n"
+               "Wrong Rom Size,\n"
+               "or IncorrectRAM size");
 
     // start the game loop
     gb_platform->run(); // TODO: change the actual game loop to run indefinetely (not a fixed timer)

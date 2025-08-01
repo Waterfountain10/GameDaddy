@@ -92,6 +92,12 @@ void Platform::load_rom_into_memory(const std::vector<uint8_t>& rom_data) {
     memory_->load_rom(rom_data);
 }
 
+bool Platform::validate_rom() {
+    if memory_->read_byte_at(xxxx)
+    if memory_->read_byte_at()
+    if memory_->read_b
+}
+
 
 } // namespace GameBoy
 
