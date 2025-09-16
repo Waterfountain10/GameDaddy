@@ -7,6 +7,7 @@
 
 #include <memory>
 #include "display/display_interface.h"
+#include <vector>
 
 namespace GameBoy {
 class Memory;

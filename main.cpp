@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <format>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_timer.h>
+#include <SDL.h>
+#include <SDL_timer.h>
 
 #include "gameboy-hardware/cpu/cpu.h"
 #include "gameboy-hardware/memory/memory.h"
