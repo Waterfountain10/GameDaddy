@@ -1,0 +1,21 @@
+# CMake build directories
+cmake-build-*/
+build/
+
+# CLion project files
+.idea/
+
+# OS junk
+.DS_Store
+
+# Compiler artifacts
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.so
+*.dylib
+
+# Logs
+*.log

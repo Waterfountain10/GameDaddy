@@ -6,6 +6,7 @@
 #define MEMORY_H
 #include <array>
 #include <cstdint>
+#include <vector>
 
 namespace GameBoy {
 
