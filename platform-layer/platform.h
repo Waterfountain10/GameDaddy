@@ -22,9 +22,10 @@ public:
     void setDisplay(std::shared_ptr<DisplayInterface> display);
     void run_frame();
     void run(); // TODO: remove after implementing real game loop
-    std::shared_ptr<DisplayInterface> display_; // TODO : move this into private and add public methods using it
+    bool validate_rom_bytes(const std::vector<uint8_t>& rom_data);
     void load_rom_into_memory(const std::vector<uint8_t>& rom_data);
-    bool validate_rom();
+
+    std::shared_ptr<DisplayInterface> display_; // TODO : move this into private and add public methods using it
 private:
     const std::shared_ptr<GameBoy::CPU> cpu_;
     std::shared_ptr<GameBoy::Memory> memory_;

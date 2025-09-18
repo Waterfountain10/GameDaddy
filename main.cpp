@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
                "Wrong Rom Size,\n"
                "or IncorrectRAM size");
 
+
     // start the game loop
     gb_platform->run(); // TODO: change the actual game loop to run indefinetely (not a fixed timer)
     SDL_Quit();

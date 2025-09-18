@@ -11,6 +11,7 @@
 
 #include "display/impl/sdl_gui.h"
 #include "../gameboy-hardware/memory/memory.h"
+#include "../gameboy-hardware/rom/rom-validation.h"
 
 namespace GameBoy {
 // TODO: implement the commented parts
@@ -92,10 +93,16 @@ void Platform::load_rom_into_memory(const std::vector<uint8_t>& rom_data) {
     memory_->load_rom(rom_data);
 }
 
-bool Platform::validate_rom() {
-    if memory_->read_byte_at(xxxx)
-    if memory_->read_byte_at()
-    if memory_->read_b
+bool Platform::validate_rom_bytes(const std::vector<uint8_t>& rom_data) {
+    auto res = validate_rom_file(rom_data);
+
+    if (res.ok == false) {
+        std::cerr << "ROM Validation failed due to :" << std::endl;
+        for (msg : res.errors) {
+            std::cerr << " - " << msg << std::endl;
+        }
+    }
+    return res.ok;
 }
 
 
