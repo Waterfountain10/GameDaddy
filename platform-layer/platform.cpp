@@ -94,17 +94,12 @@ void Platform::load_rom_into_memory(const std::vector<uint8_t>& rom_data) {
 }
 
 bool Platform::validate_rom_bytes(const std::vector<uint8_t>& rom_data) {
-    auto res = validate_rom_file(rom_data);
-
+    auto res = GameBoy::validate_rom_file(rom_data);
+    // INVALID ROM
     if (res.ok == false) {
-        std::cerr << "ROM Validation failed due to :" << std::endl;
-        for (msg : res.errors) {
-            std::cerr << " - " << msg << std::endl;
-        }
+        for (std::string& e : res.errors) std::cerr << " - " << e << std::endl;
     }
     return res.ok;
 }
-
-
 } // namespace GameBoy
 
