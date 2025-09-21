@@ -5,16 +5,23 @@
 #ifndef CPU_H
 #define CPU_H
 #include <cstdint>
+#include <memory>
 
 #endif //CPU_H
 
 namespace GameBoy {
+class Memory;
 enum class Reg8;
 
 class CPU {
 public:
     CPU();
-    void reset_registers();
+
+    void attach_memory(std::shared_ptr<Memory> mem);
+    void reset_registers_fast(); // fake simulated for development purposes
+    void reset_registers_auth(); // authentic power-on boot for registers
+
+    int step();
 
     // Getters
     uint8_t get_register_at(Reg8 reg) const;
@@ -44,9 +51,11 @@ private:
         // rest = 0 (lower 4 bit)
     };
 
-    // TODO: Implement memory access (bus) reference
+    std::shared_ptr<Memory> memory_;
+
     // TODO: Implement opcode fetch-decode-execute
 };
+
 
 enum class Reg8 {
     A, F, B, C, D, E, H, L

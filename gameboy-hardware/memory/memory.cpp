@@ -12,8 +12,10 @@ Memory::Memory() :
 }
 
 uint8_t Memory::read_byte_at(uint16_t address) {
-    uint8_t byte = memory_array->at(address);
-    return byte;
+    if (boot_rom_enabled && address < 0x0100) {
+        return boot_array->at(address);
+    }
+    return memory_array->at(address);
 }
 
 void Memory::write_byte_at(uint16_t address, uint8_t value) {
@@ -28,5 +30,21 @@ void Memory::load_rom(const std::vector<uint8_t>& rom_data) {
         memory_array->begin()
         );
 }
+
+void Memory::load_boot(const std::vector<uint8_t>& boot_data) {
+    size_t load_size = std::min(boot_data.size(), boot_array->size());
+    std::copy(
+            boot_data.begin(),
+            boot_data.begin() + load_size,
+            boot_array->begin()
+    );
+    boot_rom_enabled = true;
+}
+
+void Memory::set_boot_enabled(bool on) {
+    boot_rom_enabled = on;
+}
+
+
 }
 
