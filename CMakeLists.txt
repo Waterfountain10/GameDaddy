@@ -31,6 +31,9 @@ add_executable(gamedaddy
         gameboy-hardware/interrupts/interrupts.h
         gameboy-hardware/memory/memory.cpp
         gameboy-hardware/memory/memory.h
+        gameboy-hardware/rom/rom-validation.cpp
+        gameboy-hardware/rom/rom-validation.h
+        include/units.h
 
         # If these are unit tests with their own main(), DO NOT list them here.
         # test/cpu_test.cpp
