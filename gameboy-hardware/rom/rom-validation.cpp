@@ -85,7 +85,7 @@ static const std::unordered_map<uint8_t, size_t> RAM_SIZE = {
 static uint8_t header_checksum(const std::vector<uint8_t>& rom_data) {
     uint8_t checksum = 0;
     for (uint16_t address = 0x0134; address <= 0x014C; ++address) {
-        checksum -= rom_data.at(address);
+        checksum = checksum - rom_data.at(address) - 1;
     }
     return checksum;
 }
@@ -124,13 +124,15 @@ GameBoy::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom_d
                 actual_head_check,calcul_head_check));
         return out;
     }
-    // 3) global check (only do warning)
-    auto stored_global = static_cast<uint16_t>(rom_data.at(OFF_GLOB_CHECK) << 8 | rom_data.at(OFF_GLOB_CHECK + 1));
-    uint16_t calc_global = global_checksum(rom_data);
-    if (stored_global != calc_global) {
-        out.errors.emplace_back(std::format("Warning: global checksum failed.\nActual at: {}.\nCalculated at: {}",
-            stored_global, calc_global));
-    }
+
+    // // 3) global check (only do warning)
+    // auto stored_global = static_cast<uint16_t>(rom_data.at(OFF_GLOB_CHECK) << 8 | rom_data.at(OFF_GLOB_CHECK + 1));
+    // uint16_t calc_global = global_checksum(rom_data);
+    // if (stored_global != calc_global) {
+    //     out.errors.emplace_back(std::format("Warning: global checksum failed.\nActual at: {}.\nCalculated at: {}",
+    //         stored_global, calc_global));
+    // }
+
     // 4) check cartridge type (error if not valid cartridge)
     uint8_t cart_type = rom_data.at(OFF_CARTRIDGE_T);
     out.cartridge_type = cart_type;
@@ -141,7 +143,7 @@ GameBoy::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom_d
     // 5) check rom size
     uint8_t rom_size_code = rom_data.at(OFF_ROM_SIZE);
     out.rom_size_code = rom_size_code;
-    if (ROM_SIZE.count(cart_type) == 0) {
+    if (ROM_SIZE.count(rom_size_code) == 0) {
         out.errors.emplace_back(std::format("Error Wrong Rom Size Code: {}", rom_size_code));
         return out;
     }
