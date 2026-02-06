@@ -1,0 +1,10 @@
+[
+  {
+    "label": "GameDaddy: Run (SDL + Tetris)",
+    "command": "./scripts/run.sh",
+  },
+  {
+    "label": "GameDaddy: Debug (LLDB + Tetris)",
+    "command": "./scripts/debug.sh",
+  },
+]
