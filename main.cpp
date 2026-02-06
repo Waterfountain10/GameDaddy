@@ -80,7 +80,8 @@ int main(int argc, char *argv[])
     rom_file.read(reinterpret_cast<char*>(rom_data.data()), rom_size);
 
     // 2) validate the rom
-    if (!gb_platform->validate_rom_bytes(rom_data)) throw std::runtime_error("End the program due to failed ROM validation.");
+    if (!gb_platform->validate_rom_bytes(rom_data))
+        throw std::runtime_error("End the program due to failed ROM validation.");
 
     // 3) load the rom and memory
     gb_platform->load_rom_into_memory(rom_data);
@@ -90,11 +91,10 @@ int main(int argc, char *argv[])
     std::vector<uint8_t> bootrom; // Todo: change temporary to have a CLI parsed args
     cpu_instance->reset_registers_fast(); // PC=0x0100 (skip boot)
 
-
-
-    // start the game loop
+    // 5)  start the game loop
     gb_platform->run(); // TODO: change the actual game loop to run indefinetely (not a fixed timer)
     SDL_Quit();
+
     // End of all SDL subsystems + destruct layer
     return 0;
 }
