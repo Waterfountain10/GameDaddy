@@ -4,11 +4,11 @@
 #include <SDL.h>
 #include <SDL_timer.h>
 
-#include "src/gameboy/cpu/cpu.h"
-#include "src/gameboy/memory/memory.h"
-#include "src/_platform/platform.h"
-#include "src/_platform/display/display_interface.h"
-#include "src/_platform/display/impl/sdl_gui.h"
+#include "gameboy/cpu/cpu.h"
+#include "gameboy/memory/memory.h"
+#include "_platform/platform.h"
+#include "_platform/display/display_interface.h"
+#include "_platform/display/impl/sdl_gui.h"
 
 int main(int argc, char *argv[])
 {

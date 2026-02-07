@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(gamedaddy
-        main.cpp
+        src/main.cpp
 
         src/_platform/platform.cpp
         src/_platform/platform.h
@@ -36,7 +36,7 @@ add_executable(gamedaddy
         src/cartridge/rom/rom-validation.cpp
         src/cartridge/rom/rom-validation.h
 
-        src/include/units.h
+        include/units.h
 )
 
 # SDL via imported targets from Homebrew packages
@@ -47,7 +47,7 @@ find_package(SDL2_image CONFIG REQUIRED)
 target_link_libraries(gamedaddy PRIVATE
         SDL2::SDL2
         SDL2_image::SDL2_image
-        #SDL2_mixer::SDL2_mixer for audio
+        #SDL2_mixer::SDL2_mixer
 )
 
 target_compile_features(gamedaddy PRIVATE cxx_std_20)
