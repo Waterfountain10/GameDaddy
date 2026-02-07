@@ -9,40 +9,34 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(gamedaddy
         main.cpp
-        platform-layer/platform.cpp
-        platform-layer/platform.h
-        platform-layer/display/impl/cli.cpp
-        platform-layer/display/impl/cli.h
-        platform-layer/display/impl/sdl_gui.cpp
-        platform-layer/display/impl/sdl_gui.h
-        platform-layer/display/display_interface.h
 
-        gameboy-hardware/cpu/cpu.cpp
-        gameboy-hardware/cpu/cpu.h
-        gameboy-hardware/io/sound/sound.cpp
-        gameboy-hardware/io/sound/sound.h
-        gameboy-hardware/io/ppu/ppu.cpp
-        gameboy-hardware/io/ppu/ppu.h
-        gameboy-hardware/io/joypad/joypad.cpp
-        gameboy-hardware/io/joypad/joypad.h
-        gameboy-hardware/io/instructions/instructions.cpp
-        gameboy-hardware/io/instructions/instructions.h
-        gameboy-hardware/interrupts/interrupts.cpp
-        gameboy-hardware/interrupts/interrupts.h
-        gameboy-hardware/memory/memory.cpp
-        gameboy-hardware/memory/memory.h
-        gameboy-hardware/rom/rom-validation.cpp
-        gameboy-hardware/rom/rom-validation.h
-        include/units.h
+        src/_platform/platform.cpp
+        src/_platform/platform.h
+        src/_platform/display/impl/cli.cpp
+        src/_platform/display/impl/cli.h
+        src/_platform/display/impl/sdl_gui.cpp
+        src/_platform/display/impl/sdl_gui.h
+        src/_platform/display/display_interface.h
 
-        # If these are unit tests with their own main(), DO NOT list them here.
-        # test/cpu_test.cpp
-        # test/ppu_test.cpp
-        # test/instructions_test.cpp
-        # test/interrupts_test.cpp
-        # test/sound_test.cpp
-        # test/cli_test.cpp
-        # test/mbc_test.cpp
+        src/gameboy/cpu/cpu.cpp
+        src/gameboy/cpu/cpu.h
+        src/gameboy/io/sound/sound.cpp
+        src/gameboy/io/sound/sound.h
+        src/gameboy/io/ppu/ppu.cpp
+        src/gameboy/io/ppu/ppu.h
+        src/gameboy/io/joypad/joypad.cpp
+        src/gameboy/io/joypad/joypad.h
+        src/gameboy/io/instructions/instructions.cpp
+        src/gameboy/io/instructions/instructions.h
+        src/gameboy/interrupts/interrupts.cpp
+        src/gameboy/interrupts/interrupts.h
+        src/gameboy/memory/memory.cpp
+        src/gameboy/memory/memory.h
+
+        src/cartridge/rom/rom-validation.cpp
+        src/cartridge/rom/rom-validation.h
+
+        src/include/units.h
 )
 
 # SDL via imported targets from Homebrew packages
@@ -53,7 +47,7 @@ find_package(SDL2_image CONFIG REQUIRED)
 target_link_libraries(gamedaddy PRIVATE
         SDL2::SDL2
         SDL2_image::SDL2_image
-        #SDL2_mixer::SDL2_mixer
+        #SDL2_mixer::SDL2_mixer for audio
 )
 
 target_compile_features(gamedaddy PRIVATE cxx_std_20)

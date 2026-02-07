@@ -13,7 +13,6 @@ struct RomValidationResult {
     uint8_t cartridge_type = 0;
     uint8_t rom_size_code = 0;
     uint8_t ram_size_code = 0;
-    uint16_t global_checksum = 0;
 };
 RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom);
 };

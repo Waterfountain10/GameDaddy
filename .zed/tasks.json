@@ -1,14 +1,14 @@
 [
   {
     "label": "GameDaddy: Build (pokemon-red)",
-    "command": "./scripts/build.sh",
+    "command": "./src/scripts/build.sh",
   },
   {
     "label": "GameDaddy: Run (pokemon-red)",
-    "command": "./scripts/run.sh",
+    "command": "./src/scripts/run.sh",
   },
   {
     "label": "GameDaddy: Debug (pokemon-red)",
-    "command": "./scripts/debug.sh",
+    "command": "./src/scripts/debug.sh",
   },
 ]
