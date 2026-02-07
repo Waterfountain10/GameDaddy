@@ -19,7 +19,7 @@ public:
 
     void attach_memory(std::shared_ptr<Memory> mem);
     void reset_registers_fast(); // fake simulated for development purposes
-    void reset_registers_auth(); // authentic power-on boot for registers
+    //void reset_registers_auth(); // authentic power-on boot for registers
 
     int step();
 

@@ -48,13 +48,12 @@ add_executable(gamedaddy
 # SDL via imported targets from Homebrew packages
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
-# If/when you add audio:
-# find_package(SDL2_mixer CONFIG REQUIRED)
+# find_package(SDL2_mixer CONFIG REQUIRED) for audio
 
 target_link_libraries(gamedaddy PRIVATE
         SDL2::SDL2
         SDL2_image::SDL2_image
-        # SDL2_mixer::SDL2_mixer
+        #SDL2_mixer::SDL2_mixer
 )
 
 target_compile_features(gamedaddy PRIVATE cxx_std_20)

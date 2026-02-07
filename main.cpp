@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
     );
     gb_platform->setDisplay(screen);
 
+
     // POWER-ON GAMEDADDYYY! ٩(ˊᗜˋ*)ﾉ ---------------------------------------------------------------------------------
 
     // 1) read rom from path
@@ -83,13 +84,13 @@ int main(int argc, char *argv[])
     if (!gb_platform->validate_rom_bytes(rom_data))
         throw std::runtime_error("End the program due to failed ROM validation.");
 
-    // 3) load the rom and memory
+    // 3) load the rom and ram (only after validation)
     gb_platform->load_rom_into_memory(rom_data);
     cpu_instance->attach_memory(memory_instance);
 
     // 4) load the boot rom (fast boot in this case)
     std::vector<uint8_t> bootrom; // Todo: change temporary to have a CLI parsed args
-    cpu_instance->reset_registers_fast(); // PC=0x0100 (skip boot)
+    cpu_instance->reset_registers_fast(); // now PC=0x0100 (skip boot)
 
     // 5)  start the game loop
     gb_platform->run(); // TODO: change the actual game loop to run indefinetely (not a fixed timer)
