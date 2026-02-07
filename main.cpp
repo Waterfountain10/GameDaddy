@@ -50,12 +50,12 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // initialized all the hardware
+    // 1) initialized hardware
     std::shared_ptr<GameBoy::CPU> cpu_instance = std::make_shared<GameBoy::CPU>();
     std::shared_ptr<GameBoy::Memory> memory_instance = std::make_shared<GameBoy::Memory>();
     // TODO : add the rest of the hardware parts
 
-    // initialize the gui
+    // 2) initialize gui
     bool use_gui = true; // TODO : Implement a toggle off for CLI mode
     std::shared_ptr<GameBoy::DisplayInterface> screen;
     if (use_gui) {
@@ -64,30 +64,38 @@ int main(int argc, char *argv[])
         // TODO Implement the CLI mode
     }
 
-    // initialized the platform
+    // 3) initialized the platform
     auto gb_platform = std::make_shared<GameBoy::Platform>(
         cpu_instance,
         memory_instance
     );
     gb_platform->setDisplay(screen);
 
-    // read the rom from path
+
+    // POWER-ON GAMEDADDYYY! ٩(ˊᗜˋ*)ﾉ ---------------------------------------------------------------------------------
+
+    // 1) read rom from path
     std::streamsize rom_size = rom_file.tellg(); // tellg gets pointer position (end of file)
     rom_file.seekg(0, std::ios::beg); // move to beginnging to start reading rom data
     std::vector<uint8_t> rom_data(rom_size);
     rom_file.read(reinterpret_cast<char*>(rom_data.data()), rom_size);
 
-    // validate the rom
-    if (!gb_platform->validate_rom_bytes(rom_data)) throw std::runtime_error("End the program due to failed ROM validation.");
+    // 2) validate the rom
+    if (!gb_platform->validate_rom_bytes(rom_data))
+        throw std::runtime_error("End the program due to failed ROM validation.");
 
-    // load the rom
+    // 3) load the rom and ram (only after validation)
     gb_platform->load_rom_into_memory(rom_data);
+    cpu_instance->attach_memory(memory_instance);
 
-    // load the boot rom
+    // 4) load the boot rom (fast boot in this case)
+    std::vector<uint8_t> bootrom; // Todo: change temporary to have a CLI parsed args
+    cpu_instance->reset_registers_fast(); // now PC=0x0100 (skip boot)
 
-    // start the game loop
+    // 5)  start the game loop
     gb_platform->run(); // TODO: change the actual game loop to run indefinetely (not a fixed timer)
     SDL_Quit();
+
     // End of all SDL subsystems + destruct layer
     return 0;
 }

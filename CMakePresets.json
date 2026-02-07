@@ -1,0 +1,22 @@
+{
+  "version": 3,
+
+  "configurePresets": [
+    {
+      "name": "debug",
+      "displayName": "Debug (GameDaddy)",
+      "binaryDir": "build/debug",
+
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    }
+  ]
+}

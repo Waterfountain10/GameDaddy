@@ -98,33 +98,38 @@ static uint16_t global_checksum(const std::vector<uint8_t>& rom_data) {
     return static_cast<uint16_t>(checksum * 0xFFFF); // truncate the first 4 hex digits (32 -> 16)
 }
 
-// add validation rom
+/*  Main Cartridge ROM Validation function
+        Input : uint8_t rom_Data buffer
+        Returns: RomValidationResult Type
+*/
+
 GameBoy::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom_data) {
     GameBoy::RomValidationResult out;
 
-    // rom size check
+    // 0) rom size check
     if (rom_data.size() < MIN_ROM_SIZE) {
         out.errors.emplace_back("ROM Header is  too small. Must be larger than 0x0150 bytes.");
         return out;
     }
-    // 1) nintendo logo check
-    for (size_t k = 0; k < NINTENDO_LOGO.size(); ++k) {
-        if (rom_data.at(OFF_LOGO_BEG + k) != NINTENDO_LOGO[k]) {
-            out.errors.emplace_back("ROM header has incorrect Nintendo Logo at ");
-            out.errors.emplace_back(std::to_string(OFF_LOGO_BEG));
-            return out;
-        }
-    }
-    // 2) header check
-    uint8_t actual_head_check = rom_data.at(OFF_HEAD_CHECK);
-    uint8_t calcul_head_check = header_checksum(rom_data);
-    if (actual_head_check != calcul_head_check) {
-        out.errors.emplace_back(
-            std::format("Header Checksum Failed.\nActual at: {}.\nCalculated at: {}",
-                actual_head_check,calcul_head_check));
-        return out;
-    }
 
+    // COMMENTED OUT BECAUSE FAST BOOT DOES NOT NEED IT
+    // // 1) nintendo logo check
+    // for (size_t k = 0; k < NINTENDO_LOGO.size(); ++k) {
+    //     if (rom_data.at(OFF_LOGO_BEG + k) != NINTENDO_LOGO[k]) {
+    //         out.errors.emplace_back("ROM header has incorrect Nintendo Logo at ");
+    //         out.errors.emplace_back(std::to_string(OFF_LOGO_BEG));
+    //         return out;
+    //     }
+    // }
+    // // 2) header check
+    // uint8_t actual_head_check = rom_data.at(OFF_HEAD_CHECK);
+    // uint8_t calcul_head_check = header_checksum(rom_data);
+    // if (actual_head_check != calcul_head_check) {
+    //     out.errors.emplace_back(
+    //         std::format("Header Checksum Failed.\nActual at: {}.\nCalculated at: {}",
+    //             actual_head_check,calcul_head_check));
+    //     return out;
+    // }
     // // 3) global check (only do warning)
     // auto stored_global = static_cast<uint16_t>(rom_data.at(OFF_GLOB_CHECK) << 8 | rom_data.at(OFF_GLOB_CHECK + 1));
     // uint16_t calc_global = global_checksum(rom_data);
@@ -181,10 +186,13 @@ GameBoy::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom_d
     }
 
     // FINALLY, all checks done? return output
-    // ok = no hard errors (warnings allowed)
+    //  ok = no hard errors (warnings allowed)
     bool has_hard_error = false;
     for (auto& s : out.errors) {
-        if (s.rfind("Warning:", 0) != 0) { has_hard_error = true; break; }
+        if (s.rfind("Warning:", 0) != 0) {
+            has_hard_error = true;
+            break;
+        }
     }
     out.ok = !has_hard_error;
     return out;

@@ -19,3 +19,7 @@ build/
 
 # Logs
 *.log
+
+# editor tooling
+compile_commands.json
+.cache/
