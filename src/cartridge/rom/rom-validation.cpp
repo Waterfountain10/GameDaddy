@@ -3,6 +3,7 @@
 //
 
 #include "rom-validation.h"
+#include "../cart.h"
 #include "../../../include/units.h"
 #include <__format/format_functions.h>
 #include <unordered_map>
@@ -20,36 +21,6 @@ static constexpr size_t OFF_HEAD_CHECK  = 0x014D; // necessary for boot-rom
 static constexpr size_t OFF_GLOB_CHECK  = 0x014E; // start of global check (dont include it)
 static constexpr size_t MIN_ROM_SIZE    = 0x0150; // rom cant be smaller than this
 
-static const std::unordered_map<uint8_t, std::string> CARTRIDGE_TYPES = {
-    {0x00, "ROM ONLY"},
-    {0x01, "MBC1"},
-    {0x02, "MBC1+RAM"},
-    {0x03, "MBC1+RAM+BATTERY"},
-    {0x05, "MBC2"},
-    {0x06, "MBC2+BATTERY"},
-    {0x08, "ROM+RAM"},
-    {0x09, "ROM+RAM+BATTERY"},
-    {0x0B, "MMM01"},
-    {0x0C, "MMM01+RAM"},
-    {0x0D, "MMM01+RAM+BATTERY"},
-    {0x0F, "MBC3+TIMER+BATTERY"},
-    {0x10, "MBC3+TIMER+RAM+BATTERY"},
-    {0x11, "MBC3"},
-    {0x12, "MBC3+RAM"},
-    {0x13, "MBC3+RAM+BATTERY"},
-    {0x19, "MBC5"},
-    {0x1A, "MBC5+RAM"},
-    {0x1B, "MBC5+RAM+BATTERY"},
-    {0x1C, "MBC5+RUMBLE"},
-    {0x1D, "MBC5+RUMBLE+RAM"},
-    {0x1E, "MBC5+RUMBLE+RAM+BATTERY"},
-    {0x20, "MBC6"},
-    {0x22, "MBC7+SENSOR+RUMBLE+RAM+BATTERY"},
-    {0xFC, "POCKET CAMERA"},
-    {0xFD, "BANDAI TAMA5"},
-    {0xFE, "HuC3"},
-    {0xFF, "HuC1+RAM+BATTERY"}
-};
 
 static const std::unordered_map<uint8_t, size_t> ROM_SIZE = {
     {0x00, 32 * KiB},
@@ -109,8 +80,8 @@ static uint16_t global_checksum(const std::vector<uint8_t>& rom_data) {
  *      uint8_t ram_size_code = 0;
  * }
  */
-GameBoy::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom_data) {
-    GameBoy::RomValidationResult out;
+Cartridge::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom_data) {
+    Cartridge::RomValidationResult out;
 
     // check rom is not too small
     if (rom_data.size() < MIN_ROM_SIZE) {
@@ -121,7 +92,7 @@ GameBoy::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom_d
     // check cartridge type (error if not valid cartridge)
     uint8_t cart_type = rom_data.at(OFF_CARTRIDGE_T);
     out.cartridge_type = cart_type;
-    if (CARTRIDGE_TYPES.count(cart_type) == 0) {
+    if (Cartridge::CARTRIDGE_TYPES.count(cart_type) == 0) {
         out.errors.emplace_back(std::format("Error Wrong Cartridge Type: {}", cart_type));
         return out;
     }

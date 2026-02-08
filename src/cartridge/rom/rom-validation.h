@@ -6,7 +6,7 @@
 #define ROM_VALIDATION_H
 #include <vector>
 
-namespace GameBoy {
+namespace Cartridge {
 struct RomValidationResult {
     bool ok = false;
     std::vector<std::string> errors;

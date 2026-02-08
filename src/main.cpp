@@ -84,10 +84,7 @@ int main(int argc, char *argv[])
     if (!gb_platform->validate_rom_bytes(rom_data))
         throw std::runtime_error("End the program due to failed ROM validation.");
 
-    // 3) instantiate the cartridge and its metadata
-    // TO DO:
-
-    // 3) load the rom and ram
+    // 3) load the cartridge and ram
     gb_platform->load_rom_into_memory(rom_data);
     cpu_instance->attach_memory(memory_instance);
 
