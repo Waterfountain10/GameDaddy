@@ -11,4 +11,8 @@
     "label": "GameDaddy: Debug (pokemon-red)",
     "command": "./scripts/debug.sh",
   },
+  {
+    "label": "GameDaddy: Test",
+    "command": "./scripts/test.sh",
+  },
 ]

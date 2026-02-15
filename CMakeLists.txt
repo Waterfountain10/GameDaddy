@@ -3,51 +3,81 @@ project(gamedaddy)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Optional quality-of-life
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_executable(gamedaddy
-        src/main.cpp
+# ---------------------------
+# GoogleTest
+# ---------------------------
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+)
+FetchContent_MakeAvailable(googletest)
 
-        src/_platform/platform.cpp
-        src/_platform/platform.h
-        src/_platform/display/impl/cli.cpp
-        src/_platform/display/impl/cli.h
-        src/_platform/display/impl/sdl_gui.cpp
-        src/_platform/display/impl/sdl_gui.h
-        src/_platform/display/display_interface.h
-
-        src/gameboy/cpu/cpu.cpp
-        src/gameboy/cpu/cpu.h
-        src/gameboy/io/sound/sound.cpp
-        src/gameboy/io/sound/sound.h
-        src/gameboy/io/ppu/ppu.cpp
-        src/gameboy/io/ppu/ppu.h
-        src/gameboy/io/joypad/joypad.cpp
-        src/gameboy/io/joypad/joypad.h
-        src/gameboy/io/instructions/instructions.cpp
-        src/gameboy/io/instructions/instructions.h
-        src/gameboy/interrupts/interrupts.cpp
-        src/gameboy/interrupts/interrupts.h
-        src/gameboy/memory/memory.cpp
-        src/gameboy/memory/memory.h
-
-        src/cartridge/rom/rom-validation.cpp
-        src/cartridge/rom/rom-validation.h
-
-        include/units.h
+# ---------------------------
+# Core Emulator Library (public since we testing this)
+#    - CPU
+#    - Memory
+#    - Cartridge
+#    - MBC
+#    - PPU
+#    - Sound
+#    - Interrupts
+# ---------------------------
+file(GLOB_RECURSE CORE_SRC
+    src/gameboy/**/*.cpp
+    src/cartridge/**/*.cpp
 )
 
-# SDL via imported targets from Homebrew packages
+add_library(gamedaddy_core ${CORE_SRC})
+
+target_include_directories(gamedaddy_core PUBLIC
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src
+)
+
+target_compile_features(gamedaddy_core PUBLIC cxx_std_20)
+
+# ---------------------------
+# Main Executable (private)
+#     - main.cpp
+#     - platform.cpp
+#     - sdl_gui.cpp
+#     - links SDL
+# ---------------------------
+file(GLOB_RECURSE PLATFORM_SRC
+    src/_platform/*.cpp
+)
+
+add_executable(gamedaddy
+    src/main.cpp
+    ${PLATFORM_SRC}
+)
+
+# SDL only belongs to executable, NOT tests
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
-# find_package(SDL2_mixer CONFIG REQUIRED) for audio
 
 target_link_libraries(gamedaddy PRIVATE
-        SDL2::SDL2
-        SDL2_image::SDL2_image
-        #SDL2_mixer::SDL2_mixer
+    gamedaddy_core
+    SDL2::SDL2
+    SDL2_image::SDL2_image
 )
 
-target_compile_features(gamedaddy PRIVATE cxx_std_20)
+# ---------------------------
+# Tests (private with gtest)
+# ---------------------------
+enable_testing()
+
+file(GLOB TEST_SOURCES test/*.cpp)
+
+add_executable(tests ${TEST_SOURCES})
+
+target_link_libraries(tests PRIVATE
+    gamedaddy_core
+    gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(tests)
