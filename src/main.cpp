@@ -4,11 +4,11 @@
 #include <SDL.h>
 #include <SDL_timer.h>
 
-#include "gameboy-hardware/cpu/cpu.h"
-#include "gameboy-hardware/memory/memory.h"
-#include "platform-layer/platform.h"
-#include "platform-layer/display/display_interface.h"
-#include "platform-layer/display/impl/sdl_gui.h"
+#include "gameboy/cpu/cpu.h"
+#include "gameboy/memory/memory.h"
+#include "_platform/platform.h"
+#include "_platform/display/display_interface.h"
+#include "_platform/display/impl/sdl_gui.h"
 
 int main(int argc, char *argv[])
 {
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     if (!gb_platform->validate_rom_bytes(rom_data))
         throw std::runtime_error("End the program due to failed ROM validation.");
 
-    // 3) load the rom and ram (only after validation)
+    // 3) load the cartridge and ram
     gb_platform->load_rom_into_memory(rom_data);
     cpu_instance->attach_memory(memory_instance);
 

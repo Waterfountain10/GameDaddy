@@ -9,9 +9,8 @@
 #include <SDL_timer.h>
 #include <thread>
 
-#include "display/impl/sdl_gui.h"
-#include "../gameboy-hardware/memory/memory.h"
-#include "../gameboy-hardware/rom/rom-validation.h"
+#include "../gameboy/memory/memory.h"
+#include "../cartridge/rom/rom-validation.h"
 
 namespace GameBoy {
 // TODO: implement the commented parts
@@ -89,12 +88,13 @@ void Platform::run() {
     }
 }
 
+// TODO: change this into attach_cartridge_to_
 void Platform::load_rom_into_memory(const std::vector<uint8_t>& rom_data) {
     memory_->load_rom(rom_data);
 }
 
 bool Platform::validate_rom_bytes(const std::vector<uint8_t>& rom_data) {
-    auto res = GameBoy::validate_rom_file(rom_data);
+    auto res = Cartridge::validate_rom_file(rom_data);
     // INVALID ROM
     if (res.ok == false) {
         for (std::string& e : res.errors) std::cerr << " - " << e << std::endl;
@@ -102,4 +102,3 @@ bool Platform::validate_rom_bytes(const std::vector<uint8_t>& rom_data) {
     return res.ok;
 }
 } // namespace GameBoy
-

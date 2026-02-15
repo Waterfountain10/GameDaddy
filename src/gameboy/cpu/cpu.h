@@ -10,7 +10,9 @@
 #endif //CPU_H
 
 namespace GameBoy {
+
 class Memory;
+
 enum class Reg8;
 
 class CPU {

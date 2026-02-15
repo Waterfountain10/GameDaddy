@@ -33,21 +33,6 @@ void CPU::reset_registers_fast() {
     sp_ = 0xFFFE;
 }
 
-// COMMENTED OUT BECAUSE WE ARE ONLY USING FAST BOOT
-// void CPU::reset_registers_auth() {
-//     a_ = 0;
-//     f_ = 0;
-//     b_ = 0;
-//     c_ = 0;
-//     d_ = 0;
-//     e_ = 0;
-//     h_ = 0;
-//     l_ = 0;
-//     pc_ = 0;
-//     sp_ = 0;
-//     sp_ = 0x0000;
-//     pc_ = 0x0000; // start executing at boot ROM
-// }
 
 int CPU::step() {
     if (!memory_) throw std::runtime_error("There is no Memory attached to CPU");
@@ -58,7 +43,7 @@ int CPU::step() {
     std::cout << std::hex << "PC=" << pc_before << " OPC=" << (int)opcode << "\n";
 
     // decode/execute (skeleton)
-    // TODO: remove this and use chip-8 switch table
+    // TODO: remove this and use chip-8 switch table (or jump threading)
     switch (opcode) {
         case 0x00: // NOP
             // do nothing
