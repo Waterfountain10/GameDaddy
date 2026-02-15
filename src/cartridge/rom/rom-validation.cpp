@@ -2,15 +2,22 @@
 // Created by William Kiem Lafond on 2025-09-17.
 //
 
-#include "rom-validation.h"
-#include "../cart.h"
 #include "../../../include/units.h"
-#include <__format/format_functions.h>
+#include "../../../include/helpers.h"
+#include "../cart.h"
+#include "rom-validation.h"
+
+
+#include <string>
 #include <unordered_map>
+#include <cstdint>
+#include <cstddef>
+#include <vector>
+
 using GameBoy::units::KiB;
 using GameBoy::units::MiB;
 
-namespace GameBoy {
+namespace Cartridge {
 
 static constexpr size_t OFF_ROM_BEGIN   = 0x0100;
 static constexpr size_t OFF_LOGO_BEG    = 0x0104; // necessary for boot-rom
@@ -32,9 +39,9 @@ static const std::unordered_map<uint8_t, size_t> ROM_SIZE = {
     {0x06, 2 * MiB},
     {0x07, 4 * MiB},
     {0x08, 8 * MiB},
-    {0x52, 1.1 * MiB}, // inaccurate and not widely used
-    {0x53, 1.2 * MiB}, // inaccurate and not widely used
-    {0x54, 1.5 * MiB}, // inaccurate and not widely used
+    {0x52, 1152 * KiB}, // inaccurate and not widely used
+    {0x53, 1280 * KiB}, // inaccurate and not widely used
+    {0x54, 1536 * KiB}, // inaccurate and not widely used
 };
 
 static const std::unordered_map<uint8_t, size_t> RAM_SIZE = {
@@ -92,8 +99,8 @@ Cartridge::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom
     // check cartridge type (error if not valid cartridge)
     uint8_t cart_type = rom_data.at(OFF_CARTRIDGE_T);
     out.cartridge_type = cart_type;
-    if (Cartridge::CARTRIDGE_TYPES.count(cart_type) == 0) {
-        out.errors.emplace_back(std::format("Error Wrong Cartridge Type: {}", cart_type));
+    if (CARTRIDGE_TYPES.count(cart_type) == 0) {
+        out.errors.emplace_back(Gameboy::msg("Error Wrong Cartridge Type:", cart_type));
         return out;
     }
 
@@ -101,13 +108,14 @@ Cartridge::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom
     uint8_t rom_size_code = rom_data.at(OFF_ROM_SIZE);
     out.rom_size_code = rom_size_code;
     if (ROM_SIZE.count(rom_size_code) == 0) {
-        out.errors.emplace_back(std::format("Error Wrong Rom Size Code: {}", rom_size_code));
+        out.errors.emplace_back(Gameboy::msg("Error Wrong Rom Size Code:", rom_size_code));
         return out;
     }
 
     // check if actual rom data size is in lined with our code's mapping
     if (rom_data.size() != ROM_SIZE.at(rom_size_code)) {
-        out.errors.emplace_back(std::format("Error Wrong Rom Size: {} and mapped to {}", rom_data.size(), ROM_SIZE.at(rom_size_code)));
+        out.errors.emplace_back(Gameboy::msg("Error Wrong Rom Size: ", rom_data.size(),
+                                             "and mapped to", ROM_SIZE.at(rom_size_code)));
         return out;
     }
 
@@ -152,4 +160,5 @@ Cartridge::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom
     out.ok = !has_hard_error;
     return out;
 }
+
 }

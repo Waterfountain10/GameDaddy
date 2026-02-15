@@ -1,12 +1,13 @@
 //
 // Created by William Kiem Lafond on 2025-09-17.
 //
-
-#ifndef ROM_VALIDATION_H
-#define ROM_VALIDATION_H
+#pragma once
 #include <vector>
+#include <string>
+#include <cstdint>
 
 namespace Cartridge {
+
 struct RomValidationResult {
     bool ok = false;
     std::vector<std::string> errors;
@@ -14,7 +15,6 @@ struct RomValidationResult {
     uint8_t rom_size_code = 0;
     uint8_t ram_size_code = 0;
 };
+
 RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom);
 };
-
-#endif //ROM_VALIDATION_H
