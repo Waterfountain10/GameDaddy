@@ -10,7 +10,7 @@
 #include <thread>
 
 #include "../gameboy/memory/memory.h"
-#include "../cartridge/rom/rom-validation.h"
+#include "../cartridge/rom/rom.h"
 
 namespace GameBoy {
 // TODO: implement the commented parts

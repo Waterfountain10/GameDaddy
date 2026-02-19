@@ -10,17 +10,19 @@ namespace Cartridge {
 
 // MBC Interface (pure virtual/abstract) ---------------------------------------------------------------------
 class MBC {
+protected:
+    MBC()                      = default;
+
 public:
-    virtual ~MBC() = default;
-    MBC(const MBC&) = delete;            // mbc cant be copied via:      MBC new_mbc(mbc)
-    MBC& operator=(const MBC&) = delete; // mbc cant be copy-assign via: new_mbc = mbc
-    MBC(MBC&&) = delete;                 // mbc cant be moved via:       MBC new_mbc = std::move(mbc)
-    MBC& operator=(MBC&&) = delete;      // mbc cant be move-assign via: new_mbc = std::move(mbc)
+    virtual ~MBC()             = default;
+
+    MBC(const MBC&)            = delete;    // mbc cant be copied via:      MBC new_mbc(mbc)
+    MBC& operator=(const MBC&) = delete;    // mbc cant be copy-assign via: new_mbc = mbc
+    MBC(MBC&&)                 = delete;    // mbc cant be moved via:       MBC new_mbc = std::move(mbc)
+    MBC& operator=(MBC&&)      = delete;    // mbc cant be move-assign via: new_mbc = std::move(mbc)
+
     virtual uint8_t read(uint16_t addr) = 0;
     virtual void    write(uint16_t addr, uint8_t value) = 0;
-
-protected:
-    MBC() = default;
 };
 
 

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "cartridge/rom/rom-validation.h"
+#include "cartridge/rom/rom.h"
 
 using namespace Cartridge;
 
