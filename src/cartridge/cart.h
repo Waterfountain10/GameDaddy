@@ -40,19 +40,29 @@ inline const std::unordered_map<uint8_t, std::string> CARTRIDGE_TYPES = {
 };
 
 class Cart {
+public:
+    explicit Cart(std::vector<uint8_t> rom);
+
+    // forward functions to mbc_
+    uint8_t call_read(uint16_t addr);
+    void    call_write(uint16_t addr, uint8_t value);
+
+    // state-safe getters
+    uint8_t cart_type()     const { return cart_type_;}
+    uint8_t rom_size_code() const { return rom_size_code_;}
+    uint8_t ram_size_code() const { return ram_size_code_;}
+
 private:
-    uint8_t cart_type_; // 0x0147
-    uint8_t rom_size_;  // 0x0148
-    uint8_t ram_size_;  // 0x0149
+    uint8_t cart_type_     = 0;  // byte at 0x0147 ex: 0x00 for ROM ONLY
+    uint8_t rom_size_code_ = 0;  // ''      0x0148
+    uint8_t ram_size_code_ = 0;  // ''      0x0149
 
     std::vector<uint8_t> rom_;
     std::vector<uint8_t> ram_;
     std::unique_ptr<MBC> mbc_;
 
-public:
-    Cart();
-
-    uint8_t call_read(uint8_t);
-    uint8_t call_write(uint8_t);
+    void attach_mbc_();
+    void alloc_ram_();
 };
+
 }
