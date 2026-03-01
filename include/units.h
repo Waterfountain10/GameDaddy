@@ -10,4 +10,4 @@ namespace GameBoy::units {
 
 static constexpr std::size_t KiB = 1024;
 static constexpr std::size_t MiB = 1024 * KiB;
-}
+} // namespace GameBoy::units

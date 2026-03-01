@@ -2,9 +2,9 @@
 // Created by William Kiem Lafond on 2025-09-17.
 //
 #pragma once
-#include <vector>
-#include <string>
 #include <cstdint>
+#include <string>
+#include <vector>
 
 namespace Cartridge {
 
@@ -17,4 +17,4 @@ struct RomValidationResult {
 };
 
 RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom);
-};
+}; // namespace Cartridge
