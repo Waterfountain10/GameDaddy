@@ -3,6 +3,7 @@
 //
 
 #include "rom.h"
+#include "../cart.h"
 #include "../../../include/helpers.h"
 #include "../../../include/units.h"
 
