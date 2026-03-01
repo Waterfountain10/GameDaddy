@@ -11,9 +11,9 @@ namespace Gameboy {
  */
 template <typename T>
 static std::string msg(const char* prefix, T value) {
-  std::ostringstream oss;
-  oss << prefix << value;
-  return oss.str();
+    std::ostringstream oss;
+    oss << prefix << value;
+    return oss.str();
 }
 
 /*
@@ -25,9 +25,9 @@ static std::string msg(const char* prefix, T value) {
  */
 template <typename A, typename B>
 static std::string msg(const char* prefix, A a, const char* mid, B b) {
-  std::ostringstream oss;
-  oss << prefix << a << mid << b;
-  return oss.str();
+    std::ostringstream oss;
+    oss << prefix << a << mid << b;
+    return oss.str();
 }
 
 } // namespace Gameboy
