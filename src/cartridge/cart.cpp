@@ -1,13 +1,8 @@
 
 #include "cart.h"
 #include "cartridge/mbc/mbc.h"
-#include "rom/rom.cpp"
 
 namespace Cartridge {
-
-// static constexpr uint16_t OFF_CARTRIDGE_T = 0x0147;
-// static constexpr uint16_t OFF_ROM_SIZE    = 0x0148;
-// static constexpr uint16_t OFF_RAM_SIZE    = 0x0149;
 
 Cart::Cart(std::vector<uint8_t> rom) : rom_(std::move(rom)) {
   cart_type_ = rom_.at(OFF_CARTRIDGE_T);
@@ -18,42 +13,32 @@ Cart::Cart(std::vector<uint8_t> rom) : rom_(std::move(rom)) {
   attach_mbc_();
 }
 
-/*
- * Forward function to mbc's read.
- */
+// Forward function to mbc's read.
 uint8_t Cart::call_read(uint16_t addr) {
   return mbc_->read(addr);
 }
 
-/*
- * Forward function to mbc's write.
- */
+// Forward function to mbc's write.
 void Cart::call_write(uint16_t addr, uint8_t value) {
   mbc_->write(addr, value);
 }
 
-/*
- * Resize ram_ into "ram size", specified with ram_size_code_ at 0x149.
- * There is only 5 different size mappings :
- * Return: Void (implicitly reshapes vector<uint8_t> ram_ size)
- */
+// Resize ram_ into "ram size", specified with ram_size_code_ at 0x149.
 void Cart::alloc_ram_() {
   ram_.resize(RAM_SIZE.at(ram_size_code_), 0xFF); // most hardware inits with high
 }
 
-/*
- * Forward function to mbc's read.
- */
+// Forward function to mbc's read.
 void Cart::attach_mbc_() {
   switch (cart_type_) {
-  case 0x00: // ROM-ONLY
-    mbc_ = std::make_unique<RomOnly>(rom_, ram_);
-    break;
-  case 0x01: // MBC 1
-    mbc_ = std::make_unique<MBC1>(rom_, ram_);
-    break;
-  default:
-    throw std::runtime_error("Unsupported cartridge type: " + std::to_string(cart_type_));
+    case 0x00: // ROM-ONLY
+      mbc_ = std::make_unique<RomOnly>(rom_, ram_);
+      break;
+    case 0x01: // MBC 1
+      mbc_ = std::make_unique<MBC1>(rom_, ram_);
+      break;
+    default:
+      throw std::runtime_error("Unsupported cartridge type: " + std::to_string(cart_type_));
   }
 }
 

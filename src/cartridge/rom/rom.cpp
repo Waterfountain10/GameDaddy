@@ -19,17 +19,22 @@ namespace Cartridge {
 
 static constexpr size_t OFF_ROM_BEGIN = 0x0100;
 static constexpr size_t OFF_LOGO_BEG = 0x0104; // necessary for boot-rom
-static constexpr size_t OFF_CARTRIDGE_T = 0x0147;
-static constexpr size_t OFF_ROM_SIZE = 0x0148;
-static constexpr size_t OFF_RAM_SIZE = 0x0149;
+
 static constexpr size_t OFF_HEAD_CHECK = 0x014D; // necessary for boot-rom
 static constexpr size_t OFF_GLOB_CHECK = 0x014E; // start of global check (dont include it)
 static constexpr size_t MIN_ROM_SIZE = 0x0150;   // rom cant be smaller than this
 
 static const std::unordered_map<uint8_t, size_t> ROM_SIZE = {
-    {0x00, 32 * KiB},   {0x01, 64 * KiB},   {0x02, 128 * KiB}, {0x03, 256 * KiB},
-    {0x04, 512 * KiB},  {0x05, 1 * MiB},    {0x06, 2 * MiB},   {0x07, 4 * MiB},
-    {0x08, 8 * MiB},    {0x52, 1152 * KiB}, // inaccurate and not widely used
+    {0x00, 32 * KiB},
+    {0x01, 64 * KiB},
+    {0x02, 128 * KiB},
+    {0x03, 256 * KiB},
+    {0x04, 512 * KiB},
+    {0x05, 1 * MiB},
+    {0x06, 2 * MiB},
+    {0x07, 4 * MiB},
+    {0x08, 8 * MiB},
+    {0x52, 1152 * KiB},                     // inaccurate and not widely used
     {0x53, 1280 * KiB},                     // inaccurate and not widely used
     {0x54, 1536 * KiB},                     // inaccurate and not widely used
 };
@@ -148,23 +153,23 @@ Cartridge::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom
   // types without external RAM shouldn't advertise RAM
   const auto type_has_ext_ram = [&]() {
     switch (out.cartridge_type) {
-    case 0x02:
-    case 0x03:
-    case 0x08:
-    case 0x09:
-    case 0x0C:
-    case 0x0D:
-    case 0x10:
-    case 0x12:
-    case 0x13:
-    case 0x1A:
-    case 0x1B:
-    case 0x1D:
-    case 0x1E:
-    case 0x22:
-      return true;
-    default:
-      return false;
+      case 0x02:
+      case 0x03:
+      case 0x08:
+      case 0x09:
+      case 0x0C:
+      case 0x0D:
+      case 0x10:
+      case 0x12:
+      case 0x13:
+      case 0x1A:
+      case 0x1B:
+      case 0x1D:
+      case 0x1E:
+      case 0x22:
+        return true;
+      default:
+        return false;
     }
   }();
   if (!type_has_ext_ram && out.ram_size_code != 0x00) {

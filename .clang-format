@@ -1,47 +1,53 @@
 BasedOnStyle: LLVM
 
-# Indentation
-IndentWidth: 2
-TabWidth: 2
+# ---- Indentation ----
+IndentWidth: 4
+TabWidth: 4
 UseTab: Never
 
-# Line length
-ColumnLimit: 110
+# Do NOT indent inside namespaces
+NamespaceIndentation: None
 
-# Braces & control flow
-BreakBeforeBraces: Attach
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Empty
-AllowShortBlocksOnASingleLine: Never
-
-# Access specifiers (important for multi-class files)
+# Indent access specifiers (public / private)
 IndentAccessModifiers: true
 AccessModifierOffset: -2
 
-# Alignment
+# Indent case labels inside switch
+IndentCaseLabels: true
+
+# ---- Line length ----
+ColumnLimit: 110
+
+# ---- Braces & control flow ----
+BreakBeforeBraces: Attach
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+
+# ---- Alignment ----
 AlignAfterOpenBracket: Align
 AlignOperands: Align
 AlignTrailingComments: true
 
-# Spacing
+# ---- Spacing ----
 SpaceBeforeParens: ControlStatements
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 
-# Pointers / references
+# ---- Pointers / references ----
 PointerAlignment: Left
 ReferenceAlignment: Left
 DerivePointerAlignment: false
 
-# Constructors
+# ---- Constructors ----
 BreakConstructorInitializers: AfterColon
-ConstructorInitializerIndentWidth: 2
+ConstructorInitializerIndentWidth: 4
 
-# Templates & lists
+# ---- Templates / lists ----
 AlwaysBreakTemplateDeclarations: Yes
 Cpp11BracedListStyle: true
 
-# Includes
+# ---- Includes ----
 SortIncludes: true
 IncludeBlocks: Preserve

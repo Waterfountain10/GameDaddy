@@ -44,66 +44,66 @@ int CPU::step() {
   // decode/execute (skeleton)
   // TODO: remove this and use chip-8 switch table (or jump threading)
   switch (opcode) {
-  case 0x00: // NOP
-             // do nothing
-    return 4;
-  default:
-    // For now, just pretend it took 4 cycles
-    return 4;
+    case 0x00: // NOP
+               // do nothing
+      return 4;
+    default:
+      // For now, just pretend it took 4 cycles
+      return 4;
   }
 }
 
 uint8_t CPU::get_register_at(Reg8 reg) const {
   switch (reg) {
-  case Reg8::A:
-    return a_;
-  case Reg8::F:
-    return f_;
-  case Reg8::B:
-    return b_;
-  case Reg8::C:
-    return c_;
-  case Reg8::D:
-    return d_;
-  case Reg8::E:
-    return e_;
-  case Reg8::H:
-    return h_;
-  case Reg8::L:
-    return l_;
-  default:
-    return 0;
+    case Reg8::A:
+      return a_;
+    case Reg8::F:
+      return f_;
+    case Reg8::B:
+      return b_;
+    case Reg8::C:
+      return c_;
+    case Reg8::D:
+      return d_;
+    case Reg8::E:
+      return e_;
+    case Reg8::H:
+      return h_;
+    case Reg8::L:
+      return l_;
+    default:
+      return 0;
   }
 }
 
 void CPU::set_register(Reg8 reg, uint8_t value) {
   switch (reg) {
-  case Reg8::A:
-    a_ = value;
-    break;
-  case Reg8::F:
-    f_ = value & 0xF0;
-    break; // lower 4 bits are always 0
-  case Reg8::B:
-    b_ = value;
-    break;
-  case Reg8::C:
-    c_ = value;
-    break;
-  case Reg8::D:
-    d_ = value;
-    break;
-  case Reg8::E:
-    e_ = value;
-    break;
-  case Reg8::H:
-    h_ = value;
-    break;
-  case Reg8::L:
-    l_ = value;
-    break;
-  default:
-    throw std::invalid_argument("Invalid register");
+    case Reg8::A:
+      a_ = value;
+      break;
+    case Reg8::F:
+      f_ = value & 0xF0;
+      break; // lower 4 bits are always 0
+    case Reg8::B:
+      b_ = value;
+      break;
+    case Reg8::C:
+      c_ = value;
+      break;
+    case Reg8::D:
+      d_ = value;
+      break;
+    case Reg8::E:
+      e_ = value;
+      break;
+    case Reg8::H:
+      h_ = value;
+      break;
+    case Reg8::L:
+      l_ = value;
+      break;
+    default:
+      throw std::invalid_argument("Invalid register");
   }
 }
 
