@@ -1,6 +1,7 @@
 
 #include "cart.h"
 #include "cartridge/mbc/mbc.h"
+#include "cartridge/rom/rom.h"
 
 namespace Cartridge {
 
@@ -25,7 +26,7 @@ void Cart::call_write(uint16_t addr, uint8_t value) {
 
 // Resize ram_ into "ram size", specified with ram_size_code_ at 0x149.
 void Cart::alloc_ram_() {
-    ram_.resize(RAM_SIZE.at(ram_size_code_), 0xFF); // most hardware inits with high
+    ram_.resize(ram_size_bytes(ram_size_code_), 0xFF); // most hardware inits with high
 }
 
 // Forward function to mbc's read.

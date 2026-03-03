@@ -25,59 +25,35 @@ static constexpr size_t OFF_HEAD_CHECK = 0x014D; // necessary for boot-rom
 static constexpr size_t OFF_GLOB_CHECK = 0x014E; // start of global check (dont include it)
 static constexpr size_t MIN_ROM_SIZE = 0x0150;   // rom cant be smaller than this
 
-static const std::unordered_map<uint8_t, size_t> ROM_SIZE = {
-    {0x00, 32 * KiB},
-    {0x01, 64 * KiB},
-    {0x02, 128 * KiB},
-    {0x03, 256 * KiB},
-    {0x04, 512 * KiB},
-    {0x05, 1 * MiB},
-    {0x06, 2 * MiB},
-    {0x07, 4 * MiB},
-    {0x08, 8 * MiB},
-    {0x52, 1152 * KiB}, // inaccurate and not widely used
-    {0x53, 1280 * KiB}, // inaccurate and not widely used
-    {0x54, 1536 * KiB}, // inaccurate and not widely used
-};
+size_t rom_size_bytes(uint8_t code) {
+    switch (code) {
+        case 0x00: return 32 * KiB;
+        case 0x01: return 64 * KiB;
+        case 0x02: return 128 * KiB;
+        case 0x03: return 256 * KiB;
+        case 0x04: return 512 * KiB;
+        case 0x05: return 1 * MiB;
+        case 0x06: return 2 * MiB;
+        case 0x07: return 4 * MiB;
+        case 0x08: return 8 * MiB;
+        case 0x52: return 1152 * KiB; // inaccurate and not widely used
+        case 0x53: return 1280 * KiB; // inaccurate and not widely used
+        case 0x54: return 1536 * KiB; // inaccurate and not widely used
+        default:   return 0;
+    }
+}
 
-static constexpr std::array<size_t, 6> RAM_SIZE = {
-    0,          // 0x00
-    2 * KiB,    // 0x01 this has never been used so Pandocs says 'UNUSED'
-    8 * KiB,    // 0x02
-    32 * KiB,   // 0x03
-    128 * KiB,  // 0x04
-    64 * KiB,   // 0x05
-};
-
-static const std::unordered_map<uint8_t, std::string> CARTRIDGE_TYPES = {
-    {0x00, "ROM ONLY"},
-    {0x01, "MBC1"},
-    {0x02, "MBC1+RAM"},
-    {0x03, "MBC1+RAM+BATTERY"},
-    {0x05, "MBC2"},
-    {0x06, "MBC2+BATTERY"},
-    {0x08, "ROM+RAM"},
-    {0x09, "ROM+RAM+BATTERY"},
-    {0x0B, "MMM01"},
-    {0x0C, "MMM01+RAM"},
-    {0x0D, "MMM01+RAM+BATTERY"},
-    {0x0F, "MBC3+TIMER+BATTERY"},
-    {0x10, "MBC3+TIMER+RAM+BATTERY"},
-    {0x11, "MBC3"},
-    {0x12, "MBC3+RAM"},
-    {0x13, "MBC3+RAM+BATTERY"},
-    {0x19, "MBC5"},
-    {0x1A, "MBC5+RAM"},
-    {0x1B, "MBC5+RAM+BATTERY"},
-    {0x1C, "MBC5+RUMBLE"},
-    {0x1D, "MBC5+RUMBLE+RAM"},
-    {0x1E, "MBC5+RUMBLE+RAM+BATTERY"},
-    {0x20, "MBC6"},
-    {0x22, "MBC7+SENSOR+RUMBLE+RAM+BATTERY"},
-    {0xFC, "POCKET CAMERA"},
-    {0xFD, "BANDAI TAMA5"},
-    {0xFE, "HuC3"},
-    {0xFF, "HuC1+RAM+BATTERY"}};
+size_t ram_size_bytes(uint8_t code) {
+    switch (code) {
+        case 0x00: return 0;
+        case 0x01: return 2 * KiB;
+        case 0x02: return 8 * KiB;
+        case 0x03: return 32 * KiB;
+        case 0x04: return 128 * KiB;
+        case 0x05: return 64 * KiB;
+        default:   return 0;
+    }
+}
 
 static uint8_t header_checksum(const std::vector<uint8_t>& rom_data) {
     uint8_t checksum = 0;
@@ -122,28 +98,20 @@ Cartridge::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom
         return out;
     }
 
-    // check cartridge type (error if not valid cartridge)
-    uint8_t cart_type = rom_data.at(OFF_CARTRIDGE_T);
-    out.cartridge_type = cart_type;
-    if (CARTRIDGE_TYPES.count(cart_type) == 0) {
-        out.errors.emplace_back(Gameboy::msg("Error Wrong Cartridge Type:", cart_type));
-        return out;
-    }
-
     // check if rom_size_code byte is an official size code
     uint8_t rom_size_code = rom_data.at(OFF_ROM_SIZE);
     out.rom_size_code = rom_size_code;
-    if (ROM_SIZE.count(rom_size_code) == 0) {
+    if (rom_size_bytes(rom_size_code) == 0) {
         out.errors.emplace_back(Gameboy::msg("Error Wrong Rom Size Code:", rom_size_code));
         return out;
     }
 
     // check if actual rom data size is in lined with our code's mapping
-    if (rom_data.size() != ROM_SIZE.at(rom_size_code)) {
+    if (rom_data.size() != rom_size_bytes(rom_size_code)) {
         out.errors.emplace_back(Gameboy::msg("Error Wrong Rom Size: ",
                                              rom_data.size(),
                                              "and mapped to",
-                                             ROM_SIZE.at(rom_size_code)));
+                                             rom_size_bytes(rom_size_code)));
         return out;
     }
 
