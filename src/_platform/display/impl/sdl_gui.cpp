@@ -30,7 +30,11 @@ SDLGui::SDLGui(int w, int h) {
     display_height = h;
 
     // initialize a window display
-    this->win = SDL_CreateWindow("GameDaddy", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h,
+    this->win = SDL_CreateWindow("GameDaddy",
+                                 SDL_WINDOWPOS_CENTERED,
+                                 SDL_WINDOWPOS_CENTERED,
+                                 w,
+                                 h,
                                  SDL_WINDOW_RESIZABLE);
     if (!win)
         throw std::runtime_error("GameDaddy's GUI could not be opened!");

@@ -3,9 +3,9 @@
 //
 
 #include "rom.h"
-#include "../cart.h"
 #include "../../../include/helpers.h"
 #include "../../../include/units.h"
+#include "../cart.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -26,16 +26,28 @@ static constexpr size_t OFF_GLOB_CHECK = 0x014E; // start of global check (dont 
 static constexpr size_t MIN_ROM_SIZE = 0x0150;   // rom cant be smaller than this
 
 static const std::unordered_map<uint8_t, size_t> ROM_SIZE = {
-    {0x00, 32 * KiB},   {0x01, 64 * KiB},   {0x02, 128 * KiB}, {0x03, 256 * KiB},
-    {0x04, 512 * KiB},  {0x05, 1 * MiB},    {0x06, 2 * MiB},   {0x07, 4 * MiB},
-    {0x08, 8 * MiB},    {0x52, 1152 * KiB}, // inaccurate and not widely used
-    {0x53, 1280 * KiB},                     // inaccurate and not widely used
-    {0x54, 1536 * KiB},                     // inaccurate and not widely used
+    {0x00, 32 * KiB},
+    {0x01, 64 * KiB},
+    {0x02, 128 * KiB},
+    {0x03, 256 * KiB},
+    {0x04, 512 * KiB},
+    {0x05, 1 * MiB},
+    {0x06, 2 * MiB},
+    {0x07, 4 * MiB},
+    {0x08, 8 * MiB},
+    {0x52, 1152 * KiB}, // inaccurate and not widely used
+    {0x53, 1280 * KiB}, // inaccurate and not widely used
+    {0x54, 1536 * KiB}, // inaccurate and not widely used
 };
 
-static const std::unordered_map<uint8_t, size_t> RAM_SIZE = {
-    {0x00, 0},       {0x01, 2 * KiB}, // this has never been used so Pandocs says 'UNUSED'
-    {0x02, 8 * KiB}, {0x03, 32 * KiB}, {0x04, 128 * KiB}, {0x05, 64 * KiB}};
+static constexpr std::array<size_t, 6> RAM_SIZE = {
+    0,          // 0x00
+    2 * KiB,    // 0x01 this has never been used so Pandocs says 'UNUSED'
+    8 * KiB,    // 0x02
+    32 * KiB,   // 0x03
+    128 * KiB,  // 0x04
+    64 * KiB,   // 0x05
+};
 
 static const std::unordered_map<uint8_t, std::string> CARTRIDGE_TYPES = {
     {0x00, "ROM ONLY"},
@@ -128,14 +140,16 @@ Cartridge::RomValidationResult validate_rom_file(const std::vector<uint8_t>& rom
 
     // check if actual rom data size is in lined with our code's mapping
     if (rom_data.size() != ROM_SIZE.at(rom_size_code)) {
-        out.errors.emplace_back(Gameboy::msg("Error Wrong Rom Size: ", rom_data.size(), "and mapped to",
+        out.errors.emplace_back(Gameboy::msg("Error Wrong Rom Size: ",
+                                             rom_data.size(),
+                                             "and mapped to",
                                              ROM_SIZE.at(rom_size_code)));
         return out;
     }
 
     // check if RAM_size_code is in an official size code
     out.ram_size_code = rom_data[OFF_RAM_SIZE];
-    if (!RAM_SIZE.count(out.ram_size_code)) {
+    if (out.ram_size_code > 0x05) {
         out.errors.emplace_back("Unknown RAM size code (0x0149).");
     }
 

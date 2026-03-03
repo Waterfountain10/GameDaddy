@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mbc/mbc.h"
+#include <cstddef>
 #include <cstdint>
 #include <unordered_map>
 #include <vector>
@@ -11,9 +12,6 @@ namespace Cartridge {
 constexpr size_t OFF_CARTRIDGE_T = 0x0147;
 constexpr size_t OFF_ROM_SIZE = 0x0148;
 constexpr size_t OFF_RAM_SIZE = 0x0149;
-
-// RAM size lookup table (by RAM size code).
-extern const std::unordered_map<uint8_t, size_t> RAM_SIZE;
 
 class Cart {
     public:

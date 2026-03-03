@@ -51,3 +51,9 @@ Cpp11BracedListStyle: true
 # ---- Includes ----
 SortIncludes: true
 IncludeBlocks: Preserve
+
+# --- Horizontal spacing is not allowed
+AllowShortCaseLabelsOnASingleLine: false
+AllowAllArgumentsOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
