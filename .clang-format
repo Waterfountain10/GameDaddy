@@ -1,39 +1,59 @@
 BasedOnStyle: LLVM
+
+# ---- Indentation ----
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
 
-# Keep namespaces flush-left (no indent inside)
+# Do NOT indent inside namespaces
 NamespaceIndentation: None
 
-# Braces
-BreakBeforeBraces: Attach
-AllowShortFunctionsOnASingleLine: Empty
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-
-# Constructor initializer list formatting
-ConstructorInitializerIndentWidth: 4
-BreakConstructorInitializers: AfterColon
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
-
-# Pointer and reference alignment
-PointerAlignment: Left
-ReferenceAlignment: Left
-
-# Column limit
-ColumnLimit: 120
-
-# Spaces
-SpaceBeforeParens: ControlStatements
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
-SpacesInAngles: false
-SpaceBeforeAssignmentOperators: true
-Cpp11BracedListStyle: true
-
-# Indent access specifiers (public:, private:) 1 level
-AccessModifierOffset: -4
+# Indent access specifiers (public / private)
+IndentAccessModifiers: true
+AccessModifierOffset: -2
 
 # Indent case labels inside switch
 IndentCaseLabels: true
+
+# ---- Line length ----
+ColumnLimit: 110
+
+# ---- Braces & control flow ----
+BreakBeforeBraces: Attach
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+
+# ---- Alignment ----
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+AlignTrailingComments: true
+
+# ---- Spacing ----
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# ---- Pointers / references ----
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+
+# ---- Constructors ----
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerIndentWidth: 4
+
+# ---- Templates / lists ----
+AlwaysBreakTemplateDeclarations: Yes
+Cpp11BracedListStyle: true
+
+# ---- Includes ----
+SortIncludes: true
+IncludeBlocks: Preserve
+
+# --- Horizontal spacing is not allowed
+AllowShortCaseLabelsOnASingleLine: false
+AllowAllArgumentsOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false

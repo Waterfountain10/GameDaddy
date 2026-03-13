@@ -5,9 +5,9 @@
 #ifndef GUI_H
 #define GUI_H
 
-#include <memory>
 #include <SDL_render.h>
 #include <SDL_video.h>
+#include <memory>
 #include <string>
 
 #include "../display_interface.h"
@@ -15,22 +15,23 @@
 namespace GameBoy {
 
 class SDLGui : public DisplayInterface {
-public:
-    SDLGui(int w, int h);
-    ~SDLGui() override;
-    void clear() override;
-    void present_idle() override;
-    void draw_pixel(int col, int row, bool draw_on, int color_index) override;
-    int update_screen(int* gfx_ptr) override;
-private:
-    SDL_Color* init_colors();
-    SDL_Window* win = nullptr;
-    SDL_Texture*  screen_texture;
-    std::unique_ptr<SDL_Rect> screen_rect;
-    SDL_Renderer* ren = nullptr;
-    SDL_Color* colors;
-    // add private helpers for gui related stuff if needed.
-};
-}
+    public:
+        SDLGui(int w, int h);
+        ~SDLGui() override;
+        void clear() override;
+        void present_idle() override;
+        void draw_pixel(int col, int row, bool draw_on, int color_index) override;
+        int update_screen(int* gfx_ptr) override;
 
-#endif //SDL_GUI_H
+    private:
+        SDL_Color* init_colors();
+        SDL_Window* win = nullptr;
+        SDL_Texture* screen_texture;
+        std::unique_ptr<SDL_Rect> screen_rect;
+        SDL_Renderer* ren = nullptr;
+        SDL_Color* colors;
+        // add private helpers for gui related stuff if needed.
+};
+} // namespace GameBoy
+
+#endif // SDL_GUI_H

@@ -1,17 +1,16 @@
-#include <iostream>
-#include <fstream>
-#include <format>
 #include <SDL.h>
 #include <SDL_timer.h>
+#include <format>
+#include <fstream>
+#include <iostream>
 
-#include "gameboy/cpu/cpu.h"
-#include "gameboy/memory/memory.h"
-#include "_platform/platform.h"
 #include "_platform/display/display_interface.h"
 #include "_platform/display/impl/sdl_gui.h"
+#include "_platform/platform.h"
+#include "gameboy/cpu/cpu.h"
+#include "gameboy/memory/memory.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
         return 1;
@@ -26,26 +25,28 @@ int main(int argc, char *argv[])
             case 2: {
                 // CLI mode
                 rom_path = argv[1];
-                rom_file.open(rom_path, std::ios::in | std::ios::binary | std::ios::ate);  // pointing seeker at end
+                rom_file.open(rom_path,
+                              std::ios::in | std::ios::binary | std::ios::ate); // pointing seeker at end
 
                 if (!rom_file.is_open())
                     throw std::runtime_error("<rom_path> file could not be opened.");
                 if (rom_file.tellg() > 4000000)
-                    throw std::runtime_error("<rom_path> file size is too big for a standard GameBoy ROM (4 MB)");
+                    throw std::runtime_error(
+                        "<rom_path> file size is too big for a standard GameBoy ROM (4 MB)");
                 if (rom_file.tellg() < 0)
                     throw std::runtime_error("<rom_path> file size is negative");
                 break;
             }
             default: {
-                throw std::runtime_error("Incorrect number of arguments. Correct usage: ./gamedaddy <ROM_file>>");
+                throw std::runtime_error(
+                    "Incorrect number of arguments. Correct usage: ./gamedaddy <ROM_file>>");
             }
         }
         std::cout << "-------------------------------------------------------" << std::endl;
-        std::cout << std::format("Running {}",argv[0]) << std::endl;
+        std::cout << std::format("Running {}", argv[0]) << std::endl;
         std::cout << std::format("---> ROM: {}", rom_path) << std::endl;
         std::cout << "-------------------------------------------------------" << std::endl;
-    }
-    catch (const std::exception& e) {
+    } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 0;
     }
@@ -65,18 +66,15 @@ int main(int argc, char *argv[])
     }
 
     // 3) initialized the platform
-    auto gb_platform = std::make_shared<GameBoy::Platform>(
-        cpu_instance,
-        memory_instance
-    );
+    auto gb_platform = std::make_shared<GameBoy::Platform>(cpu_instance, memory_instance);
     gb_platform->setDisplay(screen);
 
-
-    // POWER-ON GAMEDADDYYY! ٩(ˊᗜˋ*)ﾉ ---------------------------------------------------------------------------------
+    // POWER-ON GAMEDADDYYY! ٩(ˊᗜˋ*)ﾉ
+    // ---------------------------------------------------------------------------------
 
     // 1) read rom from path
     std::streamsize rom_size = rom_file.tellg(); // tellg gets pointer position (end of file)
-    rom_file.seekg(0, std::ios::beg); // move to beginnging to start reading rom data
+    rom_file.seekg(0, std::ios::beg);            // move to beginnging to start reading rom data
     std::vector<uint8_t> rom_data(rom_size);
     rom_file.read(reinterpret_cast<char*>(rom_data.data()), rom_size);
 
@@ -89,7 +87,7 @@ int main(int argc, char *argv[])
     cpu_instance->attach_memory(memory_instance);
 
     // 4) load the boot rom (fast boot in this case)
-    std::vector<uint8_t> bootrom; // Todo: change temporary to have a CLI parsed args
+    std::vector<uint8_t> bootrom;         // Todo: change temporary to have a CLI parsed args
     cpu_instance->reset_registers_fast(); // now PC=0x0100 (skip boot)
 
     // 5)  start the game loop

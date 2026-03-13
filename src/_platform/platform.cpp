@@ -4,31 +4,27 @@
 
 #include "platform.h"
 
-#include <iostream>
 #include <SDL_events.h>
 #include <SDL_timer.h>
+#include <iostream>
 #include <thread>
 
+#include "../cartridge/rom/rom.h"
 #include "../gameboy/memory/memory.h"
-#include "../cartridge/rom/rom-validation.h"
 
 namespace GameBoy {
 // TODO: implement the commented parts
-Platform::Platform(
-    std::shared_ptr<GameBoy::CPU> cpu_instance,
-    std::shared_ptr<GameBoy::Memory> memory_instance
-    ):
-    cpu_ { cpu_instance },
-    memory_ { memory_instance}
-//     std::shared_ptr<GameBoy::PPU> ppu_instance,
-//     std::shared_ptr<GameBoy::JoyPad> joypad_instance,
-//     std::shared_ptr<GameBoy::Sound> sound_instance,
-//     ) : // member initializer list
-// cpu_ { cpu_instance },
-// ppu_ { ppu_instance },
-// joypad_ { joypad_instance },
-// sound_ { sound_instance },
-// gui_ { gui_instance }
+Platform::Platform(std::shared_ptr<GameBoy::CPU> cpu_instance,
+                   std::shared_ptr<GameBoy::Memory> memory_instance) :
+    cpu_{cpu_instance}, memory_{memory_instance} //     std::shared_ptr<GameBoy::PPU> ppu_instance,
+                                                 //     std::shared_ptr<GameBoy::JoyPad> joypad_instance,
+                                                 //     std::shared_ptr<GameBoy::Sound> sound_instance,
+                                                 //     ) : // member initializer list
+                                                 // cpu_ { cpu_instance },
+                                                 // ppu_ { ppu_instance },
+                                                 // joypad_ { joypad_instance },
+                                                 // sound_ { sound_instance },
+                                                 // gui_ { gui_instance }
 {
     // constructor body
     if (!cpu_ | !memory_) {
@@ -56,12 +52,12 @@ void Platform::run_frame() {
 
     // draw vertical line
     for (int r = center_row - 5; r <= center_row + 5; ++r) {
-        display_->draw_pixel(center_col, r, true, 3);  // black
+        display_->draw_pixel(center_col, r, true, 3); // black
     }
 
     // draw horizontal line
     for (int c = center_col - 5; c <= center_col + 5; ++c) {
-        display_->draw_pixel(c, center_row, true, 3);  // black
+        display_->draw_pixel(c, center_row, true, 3); // black
     }
 
     display_->present_idle();
@@ -97,7 +93,8 @@ bool Platform::validate_rom_bytes(const std::vector<uint8_t>& rom_data) {
     auto res = Cartridge::validate_rom_file(rom_data);
     // INVALID ROM
     if (res.ok == false) {
-        for (std::string& e : res.errors) std::cerr << " - " << e << std::endl;
+        for (std::string& e : res.errors)
+            std::cerr << " - " << e << std::endl;
     }
     return res.ok;
 }
