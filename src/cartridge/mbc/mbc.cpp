@@ -10,10 +10,9 @@
 
 namespace Cartridge {
 
-/// General Helpers for all MBC-related operations
-/// ------------------------------------------------------------
+// Helpers for all MBC-related operations --------------------------------------------------
 static uint32_t rom_bank_count_from_bytes(std::size_t rom_size) {
-    // each bank is 16KB
+    // each ROM bank is 16KB.
     return static_cast<uint32_t>(rom_size / 0x4000);
 }
 
@@ -44,7 +43,7 @@ void RomOnly::write(uint16_t addr, uint8_t value) {
 
 /// MBC1 - (0x01) -------------------------------------------------------------
 uint32_t MBC1::clamp_rom_bank_(uint32_t bank) const {
-    // TODO
+
     return 0;
 }
 
