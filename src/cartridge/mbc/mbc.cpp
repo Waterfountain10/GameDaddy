@@ -30,8 +30,8 @@ static uint32_t ram_bank_count_bytes(std::size_t ram_size) {
 // ---------------------------------------------------------
 uint8_t RomOnly::read(uint16_t addr) {
     if (addr <= 0x7FFF) {
-        if (addr > rom_.size()) { // edge case: inside the valid direct mapping, but after the last rom byte
-            return 0xFF;          // pull high
+        if (addr >= rom_.size()) { // edge case: inside the valid direct mapping, but after the last rom byte
+            return 0xFF;           // pull high
         }
         return rom_[addr]; // direct mapping else (correct rom-only mapping)
     } else {               // pull high everywhere else (ram location included)
@@ -72,13 +72,203 @@ uint32_t MBC1::clamp_ram_bank_(uint32_t bank) const {
 }
 
 void MBC1::write(uint16_t addr, uint8_t value) {
-    // TODO
-    return;
+    // ---------------------------------------------------------
+    // IMPORTANT:
+    // For MBC cartridges, writes in 0x0000–0x7FFF do NOT write into ROM.
+    // Instead they update internal controller registers that change
+    // which ROM/RAM banks are visible to the CPU.
+    //
+    // Only the range 0xA000–0xBFFF performs a real memory write
+    // (external cartridge RAM).
+    // ---------------------------------------------------------
+
+    // Ram-Enable register:
+    //      Any value with $A in the lower 4 bits --> enables RAM
+    //      ex. 0x2A -> enable ram
+    if (addr <= 0x1FFF) {
+        ram_enabled_ = ((value & 0x0F) == 0x0A);
+    }
+
+    // ROM Bank register:
+    //      This 5-bit register selects the rom bank region and discards the 3 highest bits.
+    //      ex. 1110001 --> 0001 --> select bank 1
+    if (addr <= 0x3FFF) {
+        rom_bank_low5_ = value & 0x1F;
+        if (rom_bank_low5_ == 0) { // bank 0
+            rom_bank_low5_ = 1;    // bank 1
+        }
+        return;
+    }
+
+    // RAM Bank number OR Upper 2 bits of ROM
+    //      When RAM: select bank in range of 00-03
+    //      When ROM: helps specifies ROM bank number (bit 5 and 6)
+    if (addr <= 0x5FFF) {
+        bank_high2_ = value & 0x03;
+        return;
+    }
+
+    // Bank Mode register
+    //      This 1-bit Register helps select between default (0), and advanced (1).
+    //      For 0: [0000-3FFF] <--ROM / SRAM--> [A000-BFFF]
+    //      For 1: [0000-3FFF] <--switchable--> [A000-BFFF]
+    if (addr <= 0x7FFF) {
+        mode_ = value & 0x01;
+        return;
+    }
+    // ---------------------------------------------------------
+    // External RAM region : where the write actually happens.
+    // ---------------------------------------------------------
+    if (addr >= 0xA000 && addr <= 0xBFFF) {
+        if (!ram_enabled_)
+            return;
+
+        if (ram_bank_count_ == 0)
+            return;
+
+        uint32_t ram_bank = 0;
+
+        if (mode_ == 1)
+            ram_bank = bank_high2_;
+
+        ram_bank = clamp_ram_bank_(ram_bank);
+
+        uint32_t offset = ram_bank * 0x2000;
+        offset += addr - 0xA000;
+
+        if (offset < ram_.size()) {
+            ram_[offset] = value;
+        }
+    }
 }
 
 uint8_t MBC1::read(uint16_t addr) {
-    // TODO
-    return 0;
+    // ---------------------------------------------------------
+    // Fixed ROM region: 0x0000 - 0x3FFF
+    //
+    // In default mode (mode 0), this region always maps to ROM bank 0.
+    //
+    // In advanced mode (mode 1), the upper bank bits (bank_high2_)
+    // extend the bank index, allowing this region to point to
+    // higher banks as well.
+    //
+    // Example:
+    //      bank_high2_ = 2
+    //      bank = 2 << 5 = 64
+    //
+    // The final address inside the ROM is:
+    //      bank * 16KB + addr
+    //
+    // clamp_rom_bank_ ensures we never select a bank that does
+    // not exist in the cartridge.
+    // ---------------------------------------------------------
+    if (addr <= 0x3FFF) {
+        uint32_t bank = 0;
+
+        if (mode_ == 1)
+            bank = bank_high2_ << 5;
+
+        bank = clamp_rom_bank_(bank);
+
+        uint32_t offset = bank * 0x4000;
+        offset += addr;
+
+        if (offset < rom_.size())
+            return rom_[offset];
+
+        return 0xFF;
+    }
+    // ---------------------------------------------------------
+    // Switchable ROM region: 0x4000 - 0x7FFF
+    //
+    // This region always maps to a selectable ROM bank.
+    //
+    // The lower 5 bits come from rom_bank_low5_.
+    //
+    // In mode 0 (ROM banking mode), the upper two bits are added
+    // from bank_high2_ to extend the ROM bank number.
+    //
+    // Example:
+    //      rom_bank_low5_ = 3
+    //      bank_high2_ = 2
+    //
+    //      bank = 3 | (2 << 5) = bank 67
+    //
+    // clamp_rom_bank_ ensures:
+    //      - the bank number stays inside the cartridge range
+    //      - bank 0 is never selected (MBC1 hardware rule)
+    //
+    // The physical ROM address becomes:
+    //
+    //      bank * 16KB + (addr - 0x4000)
+    //
+    // because the window itself starts at 0x4000.
+    // ---------------------------------------------------------
+    if (addr <= 0x7FFF) {
+
+        uint32_t bank = rom_bank_low5_;
+
+        if (mode_ == 0)
+            bank |= (bank_high2_ << 5);
+
+        bank = clamp_rom_bank_(bank);
+
+        uint32_t offset = bank * 0x4000;
+        offset += addr - 0x4000;
+
+        if (offset < rom_.size())
+            return rom_[offset];
+
+        return 0xFF;
+    }
+
+    // ---------------------------------------------------------
+    // External RAM region: 0xA000 - 0xBFFF
+    //
+    // This region maps to cartridge RAM if present.
+    //
+    // RAM must first be enabled via the RAM-enable register.
+    //
+    // In mode 0:
+    //      RAM bank is fixed to bank 0.
+    //
+    // In mode 1:
+    //      bank_high2_ selects the RAM bank (00-03).
+    //
+    // clamp_ram_bank_ ensures the selected bank does not exceed
+    // the amount of RAM physically present in the cartridge.
+    //
+    // The final RAM offset becomes:
+    //
+    //      ram_bank * 8KB + (addr - 0xA000)
+    //
+    // because each RAM bank is 8KB.
+    // ---------------------------------------------------------
+    if (addr >= 0xA000 && addr <= 0xBFFF) {
+
+        if (!ram_enabled_)
+            return 0xFF;
+
+        if (ram_bank_count_ == 0)
+            return 0xFF;
+
+        uint32_t ram_bank = 0;
+
+        if (mode_ == 1)
+            ram_bank = bank_high2_;
+
+        ram_bank = clamp_ram_bank_(ram_bank);
+
+        uint32_t offset = ram_bank * 0x2000;
+        offset += addr - 0xA000;
+
+        if (offset < ram_.size())
+            return ram_[offset];
+
+        return 0xFF;
+    }
+
+    return 0xFF;
 }
 
 } // namespace Cartridge
