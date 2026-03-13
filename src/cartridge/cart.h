@@ -3,12 +3,10 @@
 #include "mbc/mbc.h"
 #include <cstddef>
 #include <cstdint>
-#include <unordered_map>
 #include <vector>
 
 namespace Cartridge {
 
-// Offsets in the Game Boy cartridge header.
 constexpr size_t OFF_CARTRIDGE_T = 0x0147;
 constexpr size_t OFF_ROM_SIZE = 0x0148;
 constexpr size_t OFF_RAM_SIZE = 0x0149;
