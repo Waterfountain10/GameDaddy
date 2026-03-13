@@ -140,7 +140,7 @@ class RomOnly final : public MBC {
 /// should be accessed.
 class MBC1 final : public MBC {
     public:
-        explicit MBC1(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram) : rom_(rom), ram_(ram) {}
+        explicit MBC1(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram);
 
         uint8_t read(uint16_t addr) override;
         void write(uint16_t addr, uint8_t value) override;

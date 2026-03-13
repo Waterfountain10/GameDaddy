@@ -10,22 +10,24 @@
 
 namespace Cartridge {
 
-// Helpers for all MBC-related operations --------------------------------------------------
+namespace { // helpers for byte calculations
+
 static uint32_t rom_bank_count_from_bytes(std::size_t rom_size) {
-    // each ROM bank is 16KB.
-    return static_cast<uint32_t>(rom_size / 0x4000);
+    return rom_size / 0x4000; // each ROM bank is 16KB.
 }
 
 static uint32_t ram_bank_count_bytes(std::size_t ram_size) {
-    // each RAM bank is 8KB. (except for MBC2, there are 2KB)
     if (ram_size == 0)
         return 0;
     if (ram_size <= 0x2000)
         return 1;
-    return static_cast<uint32_t>(ram_size / 0x2000);
+    return ram_size / 0x2000; // each RAM bank is 8KB
 }
+} // namespace
 
-/// ROM ONLY (0x00) ---------------------------------------------------------
+// ---------------------------------------------------------
+// ROM ONLY (0x00)
+// ---------------------------------------------------------
 uint8_t RomOnly::read(uint16_t addr) {
     if (addr <= 0x7FFF) {
         if (addr > rom_.size()) { // edge case: inside the valid direct mapping, but after the last rom byte
@@ -41,15 +43,32 @@ void RomOnly::write(uint16_t addr, uint8_t value) {
     return; // no write in rom (a.k.a read-ONLY-memory
 }
 
-/// MBC1 - (0x01) -------------------------------------------------------------
-uint32_t MBC1::clamp_rom_bank_(uint32_t bank) const {
+// ---------------------------------------------------------
+// MBC1 - (0x01)
+// ---------------------------------------------------------
 
-    return 0;
+MBC1::MBC1(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram) : rom_(rom), ram_(ram) {
+    rom_bank_count_ = rom_bank_count_from_bytes(rom_.size());
+    ram_bank_count_ = ram_bank_count_bytes(ram_.size());
+}
+
+uint32_t MBC1::clamp_rom_bank_(uint32_t bank) const {
+    if (rom_bank_count_ == 0)
+        return 0;
+
+    bank %= rom_bank_count_;
+    if (bank == 0)
+        bank = 1;
+
+    return bank;
 }
 
 uint32_t MBC1::clamp_ram_bank_(uint32_t bank) const {
-    // TODO
-    return 0;
+    if (ram_bank_count_ == 0)
+        return 0;
+
+    bank %= ram_bank_count_;
+    return bank;
 }
 
 void MBC1::write(uint16_t addr, uint8_t value) {
