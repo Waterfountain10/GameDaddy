@@ -7,7 +7,55 @@ Consistency and clarity are prioritized over cleverness.
 
 ---
 
-## Formatting
+## 1. Git
+
+### 1.1 Commit Header
+```<type>[optional scope]: <description>```
+- `type` = feat/fix/chore/bug/test
+- `optional scope` = subsystem like "cpu", "core", ...
+- for projects with many systems (scope is **mandatory**):
+
+Type examples:
+
+```
+feat     → new emulator behavior
+fix      → bug fix
+refactor → code restructure
+perf     → performance improvement
+test     → tests
+
+ci       → CI/CD
+build    → build system
+docs     → documentation
+tooling  → dev tools (hooks, scripts)
+config   → config files
+
+chore    → fallback (rare)
+```
+
+### 1.2 Issue Number
+must use Github Issue # --> reference in header with at the end : `(#<number>)`
+its okay to have multiple commits per issue number.
+- commits are atomic (one implementation per commit; not feature)
+
+### 1.3 Body (optional)
+add optional body for nontrivial commits. If you can't understand the why? or the how? (or maybe even the what lol) with the commit header ... make a **body**
+
+### 1.4 Final commit message example:
+
+```
+fix(timer): reload tima on overflow edge (#17)
+  
+The previous implementation reloaded too early, which broke  
+timing-sensitive ROM tests. Match hardware behavior by delaying  
+the reload until the next machine cycle.  
+```
+
+
+
+---
+
+## 2. Formatting
 
 Formatting is enforced via `clang-format`.
 
@@ -19,7 +67,7 @@ Formatting is enforced via `clang-format`.
 - Access specifiers (`public`, `private`) are indented for readability,
   especially when multiple classes exist in one file.
 
-### Formatting commands
+### 2.1 Formatting commands
 
 Format a single file:
 ```bash
@@ -40,9 +88,9 @@ git clang-format
 
 ---
 
-## Naming Conventions
+## 3. Naming Conventions
 
-### Namespaces
+### 3.1 Namespaces
 
 * **PascalCase**
 
@@ -54,7 +102,7 @@ namespace CPU
 
 ---
 
-### Types (classes, structs, enums)
+### 3.2 Types (classes, structs, enums)
 
 * **PascalCase**
 
@@ -66,7 +114,7 @@ enum class CartridgeType;
 
 ---
 
-### Functions
+### 3.3 Functions
 
 * **snake_case**
 
@@ -77,7 +125,7 @@ clamp_rom_bank_(...)
 
 ---
 
-### Variables
+### 3.4 Variables
 
 * **snake_case**
 
@@ -88,7 +136,7 @@ ram_enabled
 
 ---
 
-### Member Variables
+### 3.5 Member Variables
 
 * **snake_case with trailing underscore**
 
@@ -99,7 +147,7 @@ ram_enabled_
 
 ---
 
-### Constants
+### 3.6 Constants
 
 * **ALL_CAPS with underscores**
 * Prefer `constexpr` over macros
@@ -111,7 +159,7 @@ constexpr uint16_t HEADER_CHECKSUM_OFFSET = 0x014D;
 
 ---
 
-### Enums
+### 3.7 Enums
 
 * Always use `enum class`
 * Specify underlying type when relevant
