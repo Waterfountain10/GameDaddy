@@ -1,0 +1,22 @@
+name: Commit Lint
+
+on:
+  pull_request:
+
+jobs:
+  commit-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate commit messages
+        run: |
+          regex='^(feat|fix|refactor|perf|test|ci|build|docs|tooling|config|chore)\([a-z0-9\-]+\): .+ \(#[0-9]+\)$'
+
+          git log origin/main..HEAD --pretty=format:"%s" | while read line; do
+            if ! echo "$line" | grep -Eq "$regex"; then
+              echo "Invalid commit: $line"
+              exit 1
+            fi
+          done
