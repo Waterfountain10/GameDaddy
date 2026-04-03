@@ -1,0 +1,41 @@
+commit-msg:
+  commands:
+    commit-msg-lint:
+      run: |
+        message=$(cat {1})
+        branch=$(git rev-parse --abbrev-ref HEAD)
+
+        # 1. Validate commit format
+        if ! echo "$message" | grep -Eq '^(feat|fix|refactor|perf|test|ci|build|docs|tooling|config|chore)\([a-z0-9\-]+\): .+ \(#\d+\)$'; then
+          echo "Invalid commit message format"
+          exit 1
+        fi
+
+        # 2. Extract issue number from commit
+        commit_issue=$(echo "$message" | grep -oE '#[0-9]+' | head -1 | tr -d '#')
+
+        # 3. Extract issue number from branch (last number)
+        branch_issue=$(echo "$branch" | grep -oE '[0-9]+$')
+
+        # 3.5. Validate Branch Naming (raises if no issue number, ignores rest)
+        if [ -z "$branch_issue" ]; then
+          echo "Commit rejected"
+          echo "Reason: branch name must end with issue number"
+          echo ""
+          echo "Expected branch:"
+          echo "  scope/name-<issue>"
+          echo "Example:"
+          echo "  cpu/opcode-decode-12"
+          exit 1
+        fi
+
+        # 4. Compare
+        if [ "$commit_issue" != "$branch_issue" ]; then
+          echo "Commit rejected"
+          echo "Reason: issue mismatch"
+          echo ""
+          echo "Branch issue:  #$branch_issue"
+          echo "Commit issue:  #$commit_issue"
+          exit 1
+          exit 1
+        fi
