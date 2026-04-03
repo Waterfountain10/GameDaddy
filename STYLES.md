@@ -10,10 +10,16 @@ Consistency and clarity are prioritized over cleverness.
 ## 1. Git
 
 ### 1.1 Commit Header
-```<type>[optional scope]: <description>```
+```<type>(<scope>): <description>```
 - `type` = feat/fix/chore/bug/test
-- `optional scope` = subsystem like "cpu", "core", ...
-- for projects with many systems (scope is **mandatory**):
+- `scope` = subsystem like "cpu", "core", ... 
+
+*try to match commit header with branch name*
+
+example: 
+- in branch : ```cpu/add-instr```
+- commit : ```fix(cpu): ...```
+
 
 Type examples:
 
@@ -41,7 +47,7 @@ its okay to have multiple commits per issue number.
 ### 1.3 Body (optional)
 add optional body for nontrivial commits. If you can't understand the why? or the how? (or maybe even the what lol) with the commit header ... make a **body**
 
-### 1.4 Final commit message example:
+### 1.4 Final commit message examples:
 
 ```
 fix(timer): reload tima on overflow edge (#17)
@@ -50,8 +56,12 @@ The previous implementation reloaded too early, which broke
 timing-sensitive ROM tests. Match hardware behavior by delaying  
 the reload until the next machine cycle.  
 ```
-
-
+```
+feat(cpu): implement adc instruction (#22) <-- no body is ok
+``` 
+```
+test(cpu): add opcode regression tests (#22)
+```
 
 ---
 
