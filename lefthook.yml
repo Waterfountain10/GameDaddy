@@ -6,7 +6,7 @@ commit-msg:
         branch=$(git rev-parse --abbrev-ref HEAD)
 
         # 1. Validate commit format
-        if ! echo "$message" | grep -Eq '^(feat|fix|refactor|perf|test|ci|build|docs|tooling|config|chore)\([a-z0-9\-]+\): .+ \(#\d+\)$'; then
+        if ! echo "$message" | grep -Eq '^(feat|fix|refactor|perf|test|ci|build|docs|tooling|config|chore)\([a-z0-9\-]+\): .+ \(#[0-9]+\)'; then
           echo "Invalid commit message format"
           exit 1
         fi
