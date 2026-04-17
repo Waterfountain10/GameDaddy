@@ -9,8 +9,7 @@ namespace Gameboy {
  * Examples:
  * msg("PC = ", pc);
  */
-template <typename T>
-static std::string msg(const char* prefix, T value) {
+template <typename T> static std::string msg(const char* prefix, T value) {
     std::ostringstream oss;
     oss << prefix << value;
     return oss.str();

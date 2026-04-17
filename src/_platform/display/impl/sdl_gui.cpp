@@ -26,15 +26,11 @@ namespace GameBoy {
  */
 SDLGui::SDLGui(int w, int h) {
     // set protected display resolutions
-    display_width = w;
+    display_width  = w;
     display_height = h;
 
     // initialize a window display
-    this->win = SDL_CreateWindow("GameDaddy",
-                                 SDL_WINDOWPOS_CENTERED,
-                                 SDL_WINDOWPOS_CENTERED,
-                                 w,
-                                 h,
+    this->win = SDL_CreateWindow("GameDaddy", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h,
                                  SDL_WINDOW_RESIZABLE);
     if (!win)
         throw std::runtime_error("GameDaddy's GUI could not be opened!");
@@ -43,7 +39,8 @@ SDLGui::SDLGui(int w, int h) {
         throw std::runtime_error("SDL_CreateRenderer failed");
     SDL_RenderSetLogicalSize(this->ren, 64, 32); // fixed 64, 32 to allow responsive scaling
     SDL_SetRenderDrawColor(ren, 10, 10, 10, 255);
-    SDL_Surface* screen_surface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 1, SDL_PIXELFORMAT_INDEX8);
+    SDL_Surface* screen_surface =
+        SDL_CreateRGBSurfaceWithFormat(0, w, h, 1, SDL_PIXELFORMAT_INDEX8);
 
     //  handle exceptions
     if (!screen_surface) {
@@ -59,7 +56,7 @@ SDLGui::SDLGui(int w, int h) {
     }
     SDL_SetPaletteColors(palette, init_colors(), 0, 4);
     screen_texture = SDL_CreateTextureFromSurface(ren, screen_surface);
-    screen_rect = std::make_unique<SDL_Rect>(SDL_Rect{0, 0, w, h});
+    screen_rect    = std::make_unique<SDL_Rect>(SDL_Rect{0, 0, w, h});
 
     SDL_FreeSurface(screen_surface);
     // one time clear + present so you see something right away
@@ -102,10 +99,10 @@ SDLGui::~SDLGui() {
         SDL_DestroyWindow(win);
     if (colors)
         free(colors);
-    ren = nullptr;
-    win = nullptr;
+    ren            = nullptr;
+    win            = nullptr;
     screen_texture = nullptr;
-    screen_rect = nullptr;
+    screen_rect    = nullptr;
 }
 
 /**

@@ -30,7 +30,8 @@ static uint32_t ram_bank_count_bytes(std::size_t ram_size) {
 // ---------------------------------------------------------
 uint8_t RomOnly::read(uint16_t addr) {
     if (addr <= 0x7FFF) {
-        if (addr >= rom_.size()) { // edge case: inside the valid direct mapping, but after the last rom byte
+        if (addr >= rom_.size()) { // edge case: inside the valid direct mapping, but after the last
+                                   // rom byte
             return 0xFF;           // pull high
         }
         return rom_[addr]; // direct mapping else (correct rom-only mapping)

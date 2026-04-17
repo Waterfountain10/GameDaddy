@@ -23,7 +23,8 @@ void Memory::write_byte_at(uint16_t address, uint8_t value) {
 
 void Memory::load_rom(const std::vector<uint8_t>& rom_data) {
     size_t load_size =
-        std::min(rom_data.size(), size_t(0x8000)); // NOT necessarily rom size, we take the first 32KB for MBC
+        std::min(rom_data.size(),
+                 size_t(0x8000)); // NOT necessarily rom size, we take the first 32KB for MBC
     std::copy(rom_data.begin(), rom_data.begin() + load_size, memory_array->begin());
 }
 
