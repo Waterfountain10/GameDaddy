@@ -14,17 +14,18 @@
 
 namespace GameBoy {
 // TODO: implement the commented parts
-Platform::Platform(std::shared_ptr<GameBoy::CPU> cpu_instance,
-                   std::shared_ptr<GameBoy::Memory> memory_instance) :
-    cpu_{cpu_instance}, memory_{memory_instance} //     std::shared_ptr<GameBoy::PPU> ppu_instance,
-                                                 //     std::shared_ptr<GameBoy::JoyPad> joypad_instance,
-                                                 //     std::shared_ptr<GameBoy::Sound> sound_instance,
-                                                 //     ) : // member initializer list
-                                                 // cpu_ { cpu_instance },
-                                                 // ppu_ { ppu_instance },
-                                                 // joypad_ { joypad_instance },
-                                                 // sound_ { sound_instance },
-                                                 // gui_ { gui_instance }
+Platform::Platform(std::shared_ptr<GameBoy::CPU>    cpu_instance,
+                   std::shared_ptr<GameBoy::Memory> memory_instance)
+    : cpu_{cpu_instance},
+      memory_{memory_instance} //     std::shared_ptr<GameBoy::PPU> ppu_instance,
+                               //     std::shared_ptr<GameBoy::JoyPad> joypad_instance,
+                               //     std::shared_ptr<GameBoy::Sound> sound_instance,
+                               //     ) : // member initializer list
+                               // cpu_ { cpu_instance },
+                               // ppu_ { ppu_instance },
+                               // joypad_ { joypad_instance },
+                               // sound_ { sound_instance },
+                               // gui_ { gui_instance }
 {
     // constructor body
     if (!cpu_ | !memory_) {
@@ -63,7 +64,8 @@ void Platform::run_frame() {
     display_->present_idle();
 
     auto frame_end_time = std::chrono::steady_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(frame_end_time - frame_start_time);
+    auto elapsed =
+        std::chrono::duration_cast<std::chrono::microseconds>(frame_end_time - frame_start_time);
     auto time_to_wait = cycle_period - elapsed;
 
     if (time_to_wait.count() > 0)
@@ -72,7 +74,7 @@ void Platform::run_frame() {
 
 void Platform::run() {
     SDL_Event e;
-    bool quit = false;
+    bool      quit = false;
     while (!quit) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {

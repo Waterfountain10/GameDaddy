@@ -31,23 +31,23 @@ namespace Cartridge {
 /// present.
 class MBC {
 
-        // The reason we have protected comes from a key cpp feature:
-        // The language forbids virtual contstructors (for destructors, its okay
-        // since compiler automatically generates one from the constructor if needed)
-        // Also, we only want it's subclasses to access MBC() mostly to override it.
-    protected:
-        MBC() = default;
+    // The reason we have protected comes from a key cpp feature:
+    // The language forbids virtual contstructors (for destructors, its okay
+    // since compiler automatically generates one from the constructor if needed)
+    // Also, we only want it's subclasses to access MBC() mostly to override it.
+protected:
+    MBC() = default;
 
-    public:
-        virtual ~MBC() = default; // destructor must be impl for each subclasses
+public:
+    virtual ~MBC() = default; // destructor must be impl for each subclasses
 
-        MBC(const MBC&) = delete;            // mbc cant be copied via:      MBC new_mbc(mbc)
-        MBC& operator=(const MBC&) = delete; // mbc cant be copy-assign via: new_mbc = mbc
-        MBC(MBC&&) = delete;                 // mbc cant be moved via:       MBC new_mbc = std::move(mbc)
-        MBC& operator=(MBC&&) = delete;      // mbc cant be move-assign via: new_mbc = std::move(mbc)
+    MBC(const MBC&)            = delete; // mbc cant be copied via:      MBC new_mbc(mbc)
+    MBC& operator=(const MBC&) = delete; // mbc cant be copy-assign via: new_mbc = mbc
+    MBC(MBC&&)            = delete; // mbc cant be moved via:       MBC new_mbc = std::move(mbc)
+    MBC& operator=(MBC&&) = delete; // mbc cant be move-assign via: new_mbc = std::move(mbc)
 
-        virtual uint8_t read(uint16_t addr) = 0;
-        virtual void write(uint16_t addr, uint8_t value) = 0;
+    virtual uint8_t read(uint16_t addr)                 = 0;
+    virtual void    write(uint16_t addr, uint8_t value) = 0;
 };
 
 // ---------------------------------------------------------------------
@@ -63,15 +63,16 @@ class MBC {
 ///     - 0xa000-0xbfff : usually absent (read returns trivial 0xff, write does nothing)
 ///
 class RomOnly final : public MBC {
-    public:
-        explicit RomOnly(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram) : rom_(rom), ram_(ram) {}
+public:
+    explicit RomOnly(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram)
+        : rom_(rom), ram_(ram) {}
 
-        uint8_t read(uint16_t addr) override;
-        void write(uint16_t addr, uint8_t value) override;
+    uint8_t read(uint16_t addr) override;
+    void    write(uint16_t addr, uint8_t value) override;
 
-    private:
-        const std::vector<uint8_t>& rom_;
-        std::vector<uint8_t>& ram_;
+private:
+    const std::vector<uint8_t>& rom_;
+    std::vector<uint8_t>&       ram_;
 };
 
 /// @brief MBC1 (0x01)
@@ -139,26 +140,26 @@ class RomOnly final : public MBC {
 /// and reads use that state to determine which physical ROM or RAM bank
 /// should be accessed.
 class MBC1 final : public MBC {
-    public:
-        explicit MBC1(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram);
+public:
+    explicit MBC1(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram);
 
-        uint8_t read(uint16_t addr) override;
-        void write(uint16_t addr, uint8_t value) override;
+    uint8_t read(uint16_t addr) override;
+    void    write(uint16_t addr, uint8_t value) override;
 
-    private:
-        const std::vector<uint8_t>& rom_;
-        std::vector<uint8_t>& ram_;
+private:
+    const std::vector<uint8_t>& rom_;
+    std::vector<uint8_t>&       ram_;
 
-        // MBC1 registers
-        bool ram_enabled_ = false;
-        uint8_t rom_bank_low5_ = 1; // 5 bits
-        uint8_t bank_high2_ = 0;    // 2 bits
-        uint8_t mode_ = 0;          // 0=ROM
+    // MBC1 registers
+    bool    ram_enabled_   = false;
+    uint8_t rom_bank_low5_ = 1; // 5 bits
+    uint8_t bank_high2_    = 0; // 2 bits
+    uint8_t mode_          = 0; // 0=ROM
 
-        uint32_t rom_bank_count_ = 0;
-        uint32_t ram_bank_count_ = 0;
-        uint32_t clamp_rom_bank_(uint32_t bank) const;
-        uint32_t clamp_ram_bank_(uint32_t bank) const;
+    uint32_t rom_bank_count_ = 0;
+    uint32_t ram_bank_count_ = 0;
+    uint32_t clamp_rom_bank_(uint32_t bank) const;
+    uint32_t clamp_ram_bank_(uint32_t bank) const;
 };
 
 } // namespace Cartridge
