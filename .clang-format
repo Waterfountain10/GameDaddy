@@ -1,59 +1,44 @@
+# Style being used is just LLVM + K&R + no namespace indenting
+
 BasedOnStyle: LLVM
 
-# ---- Indentation ----
+# --- Core formatting ---
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
+ColumnLimit: 100
 
-# Do NOT indent inside namespaces
-NamespaceIndentation: None
-
-# Indent access specifiers (public / private)
-IndentAccessModifiers: true
-AccessModifierOffset: -2
-
-# Indent case labels inside switch
-IndentCaseLabels: true
-
-# ---- Line length ----
-ColumnLimit: 110
-
-# ---- Braces & control flow ----
+# --- Braces (K&R) ---
 BreakBeforeBraces: Attach
+
+# --- Control flow ---
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
-AllowShortBlocksOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: Never
 
-# ---- Alignment ----
-AlignAfterOpenBracket: Align
-AlignOperands: Align
-AlignTrailingComments: true
+# --- Namespaces ---
+NamespaceIndentation: None
 
-# ---- Spacing ----
-SpaceBeforeParens: ControlStatements
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
+# --- Classes / access modifiers ---
+AccessModifierOffset: -4 # removes indentation for public/private
+IndentAccessModifiers: false
 
-# ---- Pointers / references ----
+# --- Pointers & references ---
 PointerAlignment: Left
-ReferenceAlignment: Left
 DerivePointerAlignment: false
 
-# ---- Constructors ----
-BreakConstructorInitializers: AfterColon
-ConstructorInitializerIndentWidth: 4
-
-# ---- Templates / lists ----
-AlwaysBreakTemplateDeclarations: Yes
-Cpp11BracedListStyle: true
-
-# ---- Includes ----
+# --- Includes ---
 SortIncludes: true
-IncludeBlocks: Preserve
 
-# --- Horizontal spacing is not allowed
-AllowShortCaseLabelsOnASingleLine: false
-AllowAllArgumentsOnNextLine: false
-BinPackArguments: false
-BinPackParameters: false
+# --- Alignment (nice for systems code) ---
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+
+# --- Spacing ---
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+
+# --- Modern C++ ---
+Cpp11BracedListStyle: true
+Standard: c++20

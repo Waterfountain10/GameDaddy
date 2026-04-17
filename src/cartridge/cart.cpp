@@ -5,7 +5,7 @@
 namespace Cartridge {
 
 Cart::Cart(std::vector<uint8_t> rom) : rom_(std::move(rom)) {
-    cart_type_ = rom_.at(OFF_CARTRIDGE_T);
+    cart_type_     = rom_.at(OFF_CARTRIDGE_T);
     rom_size_code_ = rom_.at(OFF_ROM_SIZE);
     ram_size_code_ = rom_.at(OFF_RAM_SIZE);
 
@@ -27,14 +27,14 @@ void Cart::alloc_ram_() {
 
 void Cart::attach_mbc_() {
     switch (cart_type_) {
-        case 0x00: // ROM-ONLY
-            mbc_ = std::make_unique<RomOnly>(rom_, ram_);
-            break;
-        case 0x01: // MBC 1
-            mbc_ = std::make_unique<MBC1>(rom_, ram_);
-            break;
-        default:
-            throw std::runtime_error("Unsupported cartridge type: " + std::to_string(cart_type_));
+    case 0x00: // ROM-ONLY
+        mbc_ = std::make_unique<RomOnly>(rom_, ram_);
+        break;
+    case 0x01: // MBC 1
+        mbc_ = std::make_unique<MBC1>(rom_, ram_);
+        break;
+    default:
+        throw std::runtime_error("Unsupported cartridge type: " + std::to_string(cart_type_));
     }
 }
 
