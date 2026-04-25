@@ -13,11 +13,11 @@ Cart::Cart(std::vector<uint8_t> rom) : rom_(std::move(rom)) {
     attach_mbc_();
 }
 
-uint8_t Cart::call_read(uint16_t addr) {
+uint8_t Cart::read(uint16_t addr) {
     return mbc_->read(addr);
 }
 
-void Cart::call_write(uint16_t addr, uint8_t value) {
+void Cart::write(uint16_t addr, uint8_t value) {
     mbc_->write(addr, value);
 }
 

@@ -16,8 +16,8 @@ public:
     explicit Cart(std::vector<uint8_t> rom);
 
     // forward functions to mbc_
-    uint8_t call_read(uint16_t addr);
-    void    call_write(uint16_t addr, uint8_t value);
+    uint8_t read(uint16_t addr);
+    void    write(uint16_t addr, uint8_t value);
 
     // state-safe getters
     uint8_t cart_type() const {

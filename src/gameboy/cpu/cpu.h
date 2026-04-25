@@ -24,7 +24,6 @@ public:
 
     int step();
 
-    // Getters
     uint8_t  get_register_at(Reg8 reg) const;
     uint16_t get_sp() const {
         return sp_;
@@ -33,7 +32,6 @@ public:
         return pc_;
     }
 
-    // Setters
     void set_register(Reg8 reg, uint8_t value);
     void set_sp(uint16_t value) {
         sp_ = value;
