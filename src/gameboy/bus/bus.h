@@ -11,8 +11,8 @@ public:
 
 private:
     Cartridge::Cart& cart_;
-    WRAM&            wram_;
-    HRAM&            hram_;
+    uint8_t          wram_[0x2000];
+    uint8_t          hram_[0x7F];
     // Timer& timer_;
     // PPU& ppu_;
     // Joypad& joypad_;
