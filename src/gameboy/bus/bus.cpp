@@ -39,7 +39,7 @@ uint8_t Bus::read8(uint16_t addr) {
     else if (addr < 0xC000)
         return cart_.read(addr);
     else if (addr < 0xE000)
-        return wram_.read(addr);
+        return wram_[addr];
     else if (addr < 0xFEA0)
         // TODO : return ppu_.read(addr);
         return 0xFF;
@@ -49,7 +49,7 @@ uint8_t Bus::read8(uint16_t addr) {
         // TODO: return interrupts_.read(addr);
         return 0xFF;
     else if (addr < 0xFFFF)
-        return hram_.read(addr);
+        return hram_[addr];
     else if (addr == 0xFFFF)
         // TODO: return interrupts_.read(addr);
         return 0xFF;
