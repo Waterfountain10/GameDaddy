@@ -5,4 +5,8 @@
 #ifndef INTERRUPTS_H
 #define INTERRUPTS_H
 
+namespace GameBoy {
+class InterruptController {};
+} // namespace GameBoy
+
 #endif // INTERRUPTS_H

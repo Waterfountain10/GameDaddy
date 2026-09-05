@@ -9,6 +9,13 @@
 #include <memory>
 #include <vector>
 
+#include "../cartridge/cart.h"
+#include "../gameboy/bus/bus.h"
+#include "../gameboy/interrupts/interrupts.h"
+#include "../gameboy/io/joypad/joypad.h"
+#include "../gameboy/io/ppu/ppu.h"
+#include "../gameboy/io/timer/timer.h"
+
 namespace GameBoy {
 class Memory;
 class CPU;
@@ -27,10 +34,14 @@ public:
     std::shared_ptr<DisplayInterface>
         display_; // TODO : move this into private and add public methods using it
 private:
-    const std::shared_ptr<GameBoy::CPU> cpu_;
-    std::shared_ptr<GameBoy::Memory>    memory_;
-    // const std::shared_ptr<GameBoy::PPU> ppu_;
-    // const std::shared_ptr<GameBoy::JoyPad> joypad_;
+    const std::shared_ptr<GameBoy::CPU>           cpu_;
+    std::shared_ptr<GameBoy::Memory>              memory_;
+    std::unique_ptr<Cartridge::Cart>              cartridge_;
+    std::unique_ptr<GameBoy::Bus>                 bus_;
+    std::unique_ptr<GameBoy::PPU>                 ppu_;
+    std::unique_ptr<GameBoy::Timer>               timer_;
+    std::unique_ptr<GameBoy::JoyPad>              joypad_;
+    std::unique_ptr<GameBoy::InterruptController> interrupts_;
     // const std::shared_ptr<GameBoy::Sound> sound_; // sound chip hardware
     //  Dummy values for test rendering
     int                       center_col   = 80; // Middle of 160px width

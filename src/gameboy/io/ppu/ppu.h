@@ -5,4 +5,8 @@
 #ifndef PPU_H
 #define PPU_H
 
+namespace GameBoy {
+class PPU {};
+} // namespace GameBoy
+
 #endif // PPU_H

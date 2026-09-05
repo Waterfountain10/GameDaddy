@@ -89,6 +89,13 @@ void Platform::run() {
 // TODO: change this into attach_cartridge_to_
 void Platform::load_rom_into_memory(const std::vector<uint8_t>& rom_data) {
     memory_->load_rom(rom_data);
+
+    cartridge_  = std::make_unique<Cartridge::Cart>(rom_data);
+    ppu_        = std::make_unique<GameBoy::PPU>();
+    timer_      = std::make_unique<GameBoy::Timer>();
+    joypad_     = std::make_unique<GameBoy::JoyPad>();
+    interrupts_ = std::make_unique<GameBoy::InterruptController>();
+    bus_        = std::make_unique<GameBoy::Bus>(*cartridge_);
 }
 
 bool Platform::validate_rom_bytes(const std::vector<uint8_t>& rom_data) {
