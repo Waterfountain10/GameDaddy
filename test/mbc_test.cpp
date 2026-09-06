@@ -8,8 +8,10 @@ namespace {
 std::vector<uint8_t> make_banked_rom(uint8_t cart_type, uint8_t rom_size_code,
                                      uint8_t ram_size_code, size_t bank_count) {
     std::vector<uint8_t> rom(bank_count * 0x4000, 0x00);
-    for (size_t bank = 0; bank < bank_count; ++bank)
-        rom[bank * 0x4000] = static_cast<uint8_t>(bank);
+    for (size_t bank = 0; bank < bank_count; ++bank) {
+        rom[bank * 0x4000]     = static_cast<uint8_t>(bank);
+        rom[bank * 0x4000 + 1] = static_cast<uint8_t>(bank >> 8);
+    }
 
     rom[0x0147] = cart_type;
     rom[0x0148] = rom_size_code;
@@ -109,6 +111,62 @@ TEST(MBC3, SelectsRtcRegistersAndAcceptsLatchCommand) {
 
 TEST(Cart, AttachesMBC3CartridgeTypes) {
     auto rom = make_banked_rom(0x13, 0x01, 0x03, 4);
+
+    Cartridge::Cart cart(std::move(rom));
+
+    cart.write(0x2000, 0x03);
+    EXPECT_EQ(cart.read(0x4000), 0x03);
+}
+
+TEST(MBC5, SwitchesRomBanksWithNineBitRegister) {
+    auto                 rom = make_banked_rom(0x19, 0x08, 0x00, 512);
+    std::vector<uint8_t> ram;
+
+    Cartridge::MBC5 mbc(rom, ram);
+
+    mbc.write(0x2000, 0x02);
+    EXPECT_EQ(mbc.read(0x4000), 0x02);
+
+    mbc.write(0x2000, 0x01);
+    mbc.write(0x3000, 0x01);
+    EXPECT_EQ(mbc.read(0x4000), 0x01);
+    EXPECT_EQ(mbc.read(0x4001), 0x01);
+}
+
+TEST(MBC5, AllowsRomBankZeroInSwitchableWindow) {
+    auto                 rom = make_banked_rom(0x19, 0x01, 0x00, 4);
+    std::vector<uint8_t> ram;
+
+    Cartridge::MBC5 mbc(rom, ram);
+
+    mbc.write(0x2000, 0x00);
+    mbc.write(0x3000, 0x00);
+
+    EXPECT_EQ(mbc.read(0x4000), 0x00);
+}
+
+TEST(MBC5, SelectsExternalRamBanksWhenEnabled) {
+    auto                 rom = make_banked_rom(0x1B, 0x00, 0x04, 2);
+    std::vector<uint8_t> ram(16 * 0x2000, 0xFF);
+
+    Cartridge::MBC5 mbc(rom, ram);
+
+    EXPECT_EQ(mbc.read(0xA000), 0xFF);
+
+    mbc.write(0x0000, 0x0A);
+    mbc.write(0x4000, 0x00);
+    mbc.write(0xA000, 0x12);
+    mbc.write(0x4000, 0x0F);
+    mbc.write(0xA000, 0x34);
+
+    mbc.write(0x4000, 0x00);
+    EXPECT_EQ(mbc.read(0xA000), 0x12);
+    mbc.write(0x4000, 0x0F);
+    EXPECT_EQ(mbc.read(0xA000), 0x34);
+}
+
+TEST(Cart, AttachesMBC5CartridgeTypes) {
+    auto rom = make_banked_rom(0x1B, 0x01, 0x03, 4);
 
     Cartridge::Cart cart(std::move(rom));
 
