@@ -49,6 +49,7 @@ target_compile_features(gamedaddy_core PUBLIC cxx_std_20)
 file(GLOB_RECURSE PLATFORM_SRC
     src/_platform/*.cpp
 )
+list(FILTER PLATFORM_SRC EXCLUDE REGEX ".*/debugger/.*")
 
 add_executable(gamedaddy
     src/main.cpp
@@ -70,7 +71,7 @@ target_link_libraries(gamedaddy PRIVATE
 #     - SDL visual debugger/profiler shell
 # ---------------------------
 file(GLOB_RECURSE DEBUGGER_SRC
-    src/debugger/*.cpp
+    src/_platform/debugger/*.cpp
 )
 
 add_executable(gamedaddy_debugger
