@@ -31,7 +31,13 @@ void Cart::attach_mbc_() {
         mbc_ = std::make_unique<RomOnly>(rom_, ram_);
         break;
     case 0x01: // MBC 1
+    case 0x02: // MBC 1 + RAM
+    case 0x03: // MBC 1 + RAM + BATTERY
         mbc_ = std::make_unique<MBC1>(rom_, ram_);
+        break;
+    case 0x05: // MBC 2
+    case 0x06: // MBC 2 + BATTERY
+        mbc_ = std::make_unique<MBC2>(rom_);
         break;
     default:
         throw std::runtime_error("Unsupported cartridge type: " + std::to_string(cart_type_));

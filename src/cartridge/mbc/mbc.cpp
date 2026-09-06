@@ -6,7 +6,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <sys/types.h>
 
 namespace Cartridge {
 
@@ -270,6 +269,67 @@ uint8_t MBC1::read(uint16_t addr) {
     }
 
     return 0xFF;
+}
+
+// ---------------------------------------------------------
+// MBC2 - (0x05, 0x06)
+// ---------------------------------------------------------
+
+MBC2::MBC2(const std::vector<uint8_t>& rom) : rom_(rom) {
+    rom_bank_count_ = rom_bank_count_from_bytes(rom_.size());
+    ram_.fill(0x0F);
+}
+
+uint32_t MBC2::clamp_rom_bank_(uint32_t bank) const {
+    if (rom_bank_count_ == 0)
+        return 0;
+
+    bank %= rom_bank_count_;
+    if (bank == 0)
+        bank = 1;
+
+    return bank;
+}
+
+uint8_t MBC2::read(uint16_t addr) {
+    if (addr <= 0x3FFF) {
+        if (addr < rom_.size())
+            return rom_[addr];
+        return 0xFF;
+    }
+
+    if (addr <= 0x7FFF) {
+        uint32_t bank   = clamp_rom_bank_(rom_bank_);
+        uint32_t offset = bank * 0x4000 + (addr - 0x4000);
+        if (offset < rom_.size())
+            return rom_[offset];
+        return 0xFF;
+    }
+
+    if (addr >= 0xA000 && addr <= 0xA1FF) {
+        if (!ram_enabled_)
+            return 0xFF;
+        return static_cast<uint8_t>(0xF0 | (ram_[addr - 0xA000] & 0x0F));
+    }
+
+    return 0xFF;
+}
+
+void MBC2::write(uint16_t addr, uint8_t value) {
+    if (addr <= 0x3FFF) {
+        if ((addr & 0x0100) == 0) {
+            ram_enabled_ = ((value & 0x0F) == 0x0A);
+            return;
+        }
+
+        rom_bank_ = value & 0x0F;
+        if (rom_bank_ == 0)
+            rom_bank_ = 1;
+        return;
+    }
+
+    if (addr >= 0xA000 && addr <= 0xA1FF && ram_enabled_)
+        ram_[addr - 0xA000] = value & 0x0F;
 }
 
 } // namespace Cartridge
