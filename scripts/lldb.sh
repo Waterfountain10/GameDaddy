@@ -4,4 +4,4 @@ set -e
 cmake --preset debug
 cmake --build --preset debug -j
 
-./build/debug/gamedaddy_debugger "${1:-roms/pokemon-red.gb}"
+lldb ./build/debug/gamedaddy -- "${1:-roms/pokemon-red.gb}"

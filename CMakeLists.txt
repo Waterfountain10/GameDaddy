@@ -66,6 +66,24 @@ target_link_libraries(gamedaddy PRIVATE
 )
 
 # ---------------------------
+# Debugger Executable (private)
+#     - SDL visual debugger/profiler shell
+# ---------------------------
+file(GLOB_RECURSE DEBUGGER_SRC
+    src/debugger/*.cpp
+)
+
+add_executable(gamedaddy_debugger
+    ${DEBUGGER_SRC}
+)
+
+target_link_libraries(gamedaddy_debugger PRIVATE
+    gamedaddy_core
+    SDL2::SDL2
+    SDL2_image::SDL2_image
+)
+
+# ---------------------------
 # Tests (private with gtest)
 # ---------------------------
 enable_testing()
