@@ -26,7 +26,9 @@ FetchContent_MakeAvailable(googletest)
 #    - Interrupts
 # ---------------------------
 file(GLOB_RECURSE CORE_SRC
+    src/gameboy/*.cpp
     src/gameboy/**/*.cpp
+    src/cartridge/*.cpp
     src/cartridge/**/*.cpp
 )
 

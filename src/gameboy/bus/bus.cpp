@@ -30,21 +30,25 @@ namespace GameBoy {
 
 Bus::Bus(Cartridge::Cart& cart) : cart_{cart} {};
 
+Bus::Bus(Cartridge::Cart& cart, PPU& ppu) : cart_{cart}, ppu_{&ppu} {};
+
 uint8_t Bus::read8(uint16_t addr) {
-    if (addr <= 0x8000)
+    if (addr <= 0x7FFF)
         return cart_.read(addr);
     else if (addr < 0xA000)
         // TODO : return ppu_.read(addr);
-        return 0xFF;
+        return ppu_ ? ppu_->read(addr) : 0xFF;
     else if (addr < 0xC000)
         return cart_.read(addr);
     else if (addr < 0xE000)
         return wram_[addr];
     else if (addr < 0xFEA0)
         // TODO : return ppu_.read(addr);
-        return 0xFF;
+        return ppu_ ? ppu_->read(addr) : 0xFF;
     else if (addr < 0xFF00)
         return 0xFF;
+    else if (addr >= 0xFF40 && addr <= 0xFF4B && ppu_)
+        return ppu_->read(addr);
     else if (addr < 0xFF80)
         // TODO: return interrupts_.read(addr);
         return 0xFF;
@@ -55,5 +59,24 @@ uint8_t Bus::read8(uint16_t addr) {
         return 0xFF;
     else
         return 0xFF; // default handling
+}
+
+void Bus::write8(uint16_t addr, uint8_t value) {
+    if (addr <= 0x7FFF)
+        cart_.write(addr, value);
+    else if (addr < 0xA000 && ppu_)
+        ppu_->write(addr, value);
+    else if (addr < 0xC000)
+        cart_.write(addr, value);
+    else if (addr < 0xE000)
+        wram_[addr - 0xC000] = value;
+    else if (addr < 0xFE00)
+        wram_[addr - 0xE000] = value;
+    else if (addr < 0xFEA0 && ppu_)
+        ppu_->write(addr, value);
+    else if (addr >= 0xFF40 && addr <= 0xFF4B && ppu_)
+        ppu_->write(addr, value);
+    else if (addr >= 0xFF80 && addr < 0xFFFF)
+        hram_[addr - 0xFF80] = value;
 }
 } // namespace GameBoy
