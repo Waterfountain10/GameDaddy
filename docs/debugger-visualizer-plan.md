@@ -32,10 +32,11 @@ The normal emulator window stays available through `scripts/run.sh`. Debug mode 
 Keep this additive and easy to review:
 
 1. Add a `gamedaddy_debugger` executable.
-2. Update `scripts/debug.sh` to launch it.
-3. Preserve LLDB through `scripts/lldb.sh`.
-4. Draw a first SDL debugger shell with panels.
-5. Add compact instruction/profiler placeholders.
+2. Keep debugger implementation under `src/_platform/debugger/` because it is host software/UI.
+3. Update `scripts/debug.sh` to launch it.
+4. Preserve LLDB through `scripts/lldb.sh`.
+5. Draw a first SDL debugger shell with panels.
+6. Add compact instruction/profiler placeholders.
 
 Do **not** rewrite CPU, Platform, Bus, PPU, or ROM loading in the first debugger PR.
 
@@ -52,3 +53,9 @@ Do **not** rewrite CPU, Platform, Bus, PPU, or ROM loading in the first debugger
 ## Rule of thumb
 
 The debugger renders read-only snapshots from the emulator. It should not directly mutate private emulator internals.
+
+Keep the folder boundary clear:
+
+- `src/_platform/` = host software: SDL windows, debugger UI, input plumbing, profiler visualization.
+- `src/gameboy/` = emulated console internals: CPU, bus, PPU, timers, interrupts, joypad register behavior.
+- `src/cartridge/` = external cartridge hardware plugged into the console.
