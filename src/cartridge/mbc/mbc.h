@@ -212,4 +212,28 @@ private:
     uint32_t clamp_ram_bank_(uint32_t bank) const;
 };
 
+/// @brief MBC5 (0x19-0x1E)
+///
+/// MBC5 supports up to a 9-bit ROM bank number and up to 16 RAM banks.
+class MBC5 final : public MBC {
+public:
+    explicit MBC5(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram);
+
+    uint8_t read(uint16_t addr) override;
+    void    write(uint16_t addr, uint8_t value) override;
+
+private:
+    const std::vector<uint8_t>& rom_;
+    std::vector<uint8_t>&       ram_;
+
+    bool     ram_enabled_ = false;
+    uint16_t rom_bank_    = 1; // 9 bits, bank 0 is valid on MBC5
+    uint8_t  ram_bank_    = 0; // 4 bits
+
+    uint32_t rom_bank_count_ = 0;
+    uint32_t ram_bank_count_ = 0;
+    uint32_t clamp_rom_bank_(uint32_t bank) const;
+    uint32_t clamp_ram_bank_(uint32_t bank) const;
+};
+
 } // namespace Cartridge

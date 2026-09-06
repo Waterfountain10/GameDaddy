@@ -443,4 +443,85 @@ void MBC3::write(uint16_t addr, uint8_t value) {
     }
 }
 
+// ---------------------------------------------------------
+// MBC5 - (0x19 - 0x1E)
+// ---------------------------------------------------------
+
+MBC5::MBC5(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram) : rom_(rom), ram_(ram) {
+    rom_bank_count_ = rom_bank_count_from_bytes(rom_.size());
+    ram_bank_count_ = ram_bank_count_bytes(ram_.size());
+}
+
+uint32_t MBC5::clamp_rom_bank_(uint32_t bank) const {
+    if (rom_bank_count_ == 0)
+        return 0;
+
+    return bank % rom_bank_count_;
+}
+
+uint32_t MBC5::clamp_ram_bank_(uint32_t bank) const {
+    if (ram_bank_count_ == 0)
+        return 0;
+
+    return bank % ram_bank_count_;
+}
+
+uint8_t MBC5::read(uint16_t addr) {
+    if (addr <= 0x3FFF) {
+        if (addr < rom_.size())
+            return rom_[addr];
+        return 0xFF;
+    }
+
+    if (addr <= 0x7FFF) {
+        uint32_t bank   = clamp_rom_bank_(rom_bank_);
+        uint32_t offset = bank * 0x4000 + (addr - 0x4000);
+        if (offset < rom_.size())
+            return rom_[offset];
+        return 0xFF;
+    }
+
+    if (addr >= 0xA000 && addr <= 0xBFFF) {
+        if (!ram_enabled_ || ram_bank_count_ == 0)
+            return 0xFF;
+
+        uint32_t ram_bank = clamp_ram_bank_(ram_bank_);
+        uint32_t offset   = ram_bank * 0x2000 + (addr - 0xA000);
+        if (offset < ram_.size())
+            return ram_[offset];
+        return 0xFF;
+    }
+
+    return 0xFF;
+}
+
+void MBC5::write(uint16_t addr, uint8_t value) {
+    if (addr <= 0x1FFF) {
+        ram_enabled_ = ((value & 0x0F) == 0x0A);
+        return;
+    }
+
+    if (addr <= 0x2FFF) {
+        rom_bank_ = (rom_bank_ & 0x0100) | value;
+        return;
+    }
+
+    if (addr <= 0x3FFF) {
+        rom_bank_ = (rom_bank_ & 0x00FF) | ((value & 0x01) << 8);
+        return;
+    }
+
+    if (addr <= 0x5FFF) {
+        ram_bank_ = value & 0x0F;
+        return;
+    }
+
+    if (addr >= 0xA000 && addr <= 0xBFFF && ram_enabled_ && ram_bank_count_ != 0) {
+        uint32_t ram_bank = clamp_ram_bank_(ram_bank_);
+        uint32_t offset   = ram_bank * 0x2000 + (addr - 0xA000);
+        if (offset < ram_.size())
+            ram_[offset] = value;
+    }
+}
+
 } // namespace Cartridge
