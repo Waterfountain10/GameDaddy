@@ -185,4 +185,31 @@ private:
     uint32_t clamp_rom_bank_(uint32_t bank) const;
 };
 
+/// @brief MBC3 (0x0F-0x13)
+///
+/// MBC3 adds larger ROM/RAM banking plus an RTC register window. The RTC here
+/// is a deterministic register skeleton; ticking can be added later.
+class MBC3 final : public MBC {
+public:
+    explicit MBC3(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram);
+
+    uint8_t read(uint16_t addr) override;
+    void    write(uint16_t addr, uint8_t value) override;
+
+private:
+    const std::vector<uint8_t>& rom_;
+    std::vector<uint8_t>&       ram_;
+
+    bool                   ram_rtc_enabled_ = false;
+    uint8_t                rom_bank_        = 1; // 7 bits, bank 0 remaps to 1
+    uint8_t                ram_rtc_select_  = 0;
+    uint8_t                last_latch_      = 0xFF;
+    std::array<uint8_t, 5> rtc_regs_{}; // seconds, minutes, hours, day low, day high
+
+    uint32_t rom_bank_count_ = 0;
+    uint32_t ram_bank_count_ = 0;
+    uint32_t clamp_rom_bank_(uint32_t bank) const;
+    uint32_t clamp_ram_bank_(uint32_t bank) const;
+};
+
 } // namespace Cartridge

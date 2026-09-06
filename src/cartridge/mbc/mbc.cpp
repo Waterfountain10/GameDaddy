@@ -332,4 +332,115 @@ void MBC2::write(uint16_t addr, uint8_t value) {
         ram_[addr - 0xA000] = value & 0x0F;
 }
 
+// ---------------------------------------------------------
+// MBC3 - (0x0F - 0x13)
+// ---------------------------------------------------------
+
+MBC3::MBC3(const std::vector<uint8_t>& rom, std::vector<uint8_t>& ram) : rom_(rom), ram_(ram) {
+    rom_bank_count_ = rom_bank_count_from_bytes(rom_.size());
+    ram_bank_count_ = ram_bank_count_bytes(ram_.size());
+}
+
+uint32_t MBC3::clamp_rom_bank_(uint32_t bank) const {
+    if (rom_bank_count_ == 0)
+        return 0;
+
+    bank %= rom_bank_count_;
+    if (bank == 0)
+        bank = 1;
+
+    return bank;
+}
+
+uint32_t MBC3::clamp_ram_bank_(uint32_t bank) const {
+    if (ram_bank_count_ == 0)
+        return 0;
+
+    bank %= ram_bank_count_;
+    return bank;
+}
+
+uint8_t MBC3::read(uint16_t addr) {
+    if (addr <= 0x3FFF) {
+        if (addr < rom_.size())
+            return rom_[addr];
+        return 0xFF;
+    }
+
+    if (addr <= 0x7FFF) {
+        uint32_t bank   = clamp_rom_bank_(rom_bank_);
+        uint32_t offset = bank * 0x4000 + (addr - 0x4000);
+        if (offset < rom_.size())
+            return rom_[offset];
+        return 0xFF;
+    }
+
+    if (addr >= 0xA000 && addr <= 0xBFFF) {
+        if (!ram_rtc_enabled_)
+            return 0xFF;
+
+        if (ram_rtc_select_ <= 0x03) {
+            if (ram_bank_count_ == 0)
+                return 0xFF;
+
+            uint32_t ram_bank = clamp_ram_bank_(ram_rtc_select_);
+            uint32_t offset   = ram_bank * 0x2000 + (addr - 0xA000);
+            if (offset < ram_.size())
+                return ram_[offset];
+            return 0xFF;
+        }
+
+        if (ram_rtc_select_ >= 0x08 && ram_rtc_select_ <= 0x0C)
+            return rtc_regs_[ram_rtc_select_ - 0x08];
+    }
+
+    return 0xFF;
+}
+
+void MBC3::write(uint16_t addr, uint8_t value) {
+    if (addr <= 0x1FFF) {
+        ram_rtc_enabled_ = ((value & 0x0F) == 0x0A);
+        return;
+    }
+
+    if (addr <= 0x3FFF) {
+        rom_bank_ = value & 0x7F;
+        if (rom_bank_ == 0)
+            rom_bank_ = 1;
+        return;
+    }
+
+    if (addr <= 0x5FFF) {
+        ram_rtc_select_ = value;
+        return;
+    }
+
+    if (addr <= 0x7FFF) {
+        if (last_latch_ == 0x00 && value == 0x01) {
+            // RTC ticking is not implemented yet; latch keeps deterministic skeleton values.
+        }
+        last_latch_ = value;
+        return;
+    }
+
+    if (addr >= 0xA000 && addr <= 0xBFFF) {
+        if (!ram_rtc_enabled_)
+            return;
+
+        if (ram_rtc_select_ <= 0x03) {
+            if (ram_bank_count_ == 0)
+                return;
+
+            uint32_t ram_bank = clamp_ram_bank_(ram_rtc_select_);
+            uint32_t offset   = ram_bank * 0x2000 + (addr - 0xA000);
+            if (offset < ram_.size())
+                ram_[offset] = value;
+            return;
+        }
+
+        if (ram_rtc_select_ >= 0x08 && ram_rtc_select_ <= 0x0C)
+            rtc_regs_[ram_rtc_select_ - 0x08] = value;
+    }
+}
+
 } // namespace Cartridge
