@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <array>
 #include <cstdint>
 #include <vector>
 
@@ -160,6 +161,28 @@ private:
     uint32_t ram_bank_count_ = 0;
     uint32_t clamp_rom_bank_(uint32_t bank) const;
     uint32_t clamp_ram_bank_(uint32_t bank) const;
+};
+
+/// @brief MBC2 (0x05, 0x06)
+///
+/// MBC2 has simple ROM banking plus tiny built-in RAM. It does not use the
+/// cartridge RAM size byte. The RAM stores 512 4-bit values.
+class MBC2 final : public MBC {
+public:
+    explicit MBC2(const std::vector<uint8_t>& rom);
+
+    uint8_t read(uint16_t addr) override;
+    void    write(uint16_t addr, uint8_t value) override;
+
+private:
+    const std::vector<uint8_t>& rom_;
+    std::array<uint8_t, 512>    ram_{};
+
+    bool     ram_enabled_    = false;
+    uint8_t  rom_bank_       = 1; // lower 4 bits, bank 0 remaps to 1
+    uint32_t rom_bank_count_ = 0;
+
+    uint32_t clamp_rom_bank_(uint32_t bank) const;
 };
 
 } // namespace Cartridge
