@@ -1,6 +1,9 @@
 # GameDaddy (ongoing)
 
-GameDaddy is an ongoing Game Boy emulator project written in modern C++. It’s not finished, and that’s intentional — this is about understanding hardware behavior and emulator architecture, not shipping a polished emulator (yet).
+GameDaddy is an ongoing Game Boy emulator project written in modern C++. Made (mostly) without AI as this is about understanding hardware behavior and emulator architecture.
+
+<img width="1175" height="743" alt="image" src="https://github.com/user-attachments/assets/84699bd3-b684-4a5d-8e4b-8d1ee777c201" />
+
 
 heres the architecture : https://excalidraw.com/#json=IJtkcET5ZXldeserfeHny,nqxGEe3Cls-FN_UXB4ss6w
 
